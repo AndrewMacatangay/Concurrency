@@ -12,5 +12,12 @@ Chapter2: Chapter2.o
 Chapter2.o: Chapter2.cpp
 	g++ -c -Wall Chapter2.cpp
 
+Detach: Detach.o
+	g++ -o Detach Detach.o -pthread
+	rm Detach.o
+
+Detach.o: Detach.cpp
+	g++ -c -Wall Detach.cpp
+
 clean:
-	rm Alphabet Chapter2
+	rm Alphabet Chapter2 Detach

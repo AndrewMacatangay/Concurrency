@@ -1,45 +1,47 @@
 #include<iostream>
 #include<string>
-#include<limits>
 #include<thread>
+#include<chrono>
 using namespace std;
 
 static int stall = 0;
 
+//Displays the current information
 void func1()
 {
-	int counter = 1;
+	int seconds = 1;
+	
 	while(1)
 	{
 		cout << "\033c";
 		cout << "Type and enter '1' to stop the program!" << endl;
 		cout << "Wrong inputs will result in a 5 second stall." << endl;
-		cout << "Thread 1 ran for " << counter++ << " second(s)... " << endl;
-		cout << "Current stall: " << (stall ? stall-- : stall) << " seconds" << endl;
+		cout << "Thread 1 ran for " << seconds++ << " second(s)... " << endl;
+		cout << "Current stall: " << (stall ? stall-- : 0) << " seconds" << endl;
 		this_thread::sleep_for(1s);
 	}
 }
 
-
-//Todo: Stop cin from getting user input while a stall exists
+//Prompts the user for input
 void func2()
 {
 	string input;
-	//bool second = false;
 	
-	for (cin >> input; 1;)
+	//Continuously ask for input until the correct input is given
+	while (cin >> input)
 	{
+		//Add a penalty of 5 seconds if the input is wrong
 		if (input != "1")
 		{
-			cout << "Wrong password, stalled for 5 seconds" << endl;
+			cout << "Wrong input! Stalled for 5 seconds" << endl;
 			stall += 5;
-			this_thread::sleep_for(5s);
 		}
+		//If the input is correct, stall the thread for the duration of the stall
 		else
+		{
+			this_thread::sleep_for(chrono::seconds(stall));
 			break;
-		
-		if (!stall)
-			cin >> input;
+		}
 	}
 }
 
