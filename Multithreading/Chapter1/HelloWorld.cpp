@@ -1,3 +1,5 @@
+//This is just a Hello program using threads
+
 #include <iostream>
 #include <thread>
 using namespace std;
@@ -9,7 +11,7 @@ void hello()
 
 int main()
 {
-	std::thread t(hello);
+	thread t(hello);
 	t.join();
 	
 	return 0;
