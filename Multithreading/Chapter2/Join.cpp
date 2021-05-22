@@ -1,3 +1,7 @@
+//A program to showcase join(). The main thread will verify the input while the
+//worker thread will provide information. Once the correct input is given, the
+//worker thread will join with the main thread amd the program will terminate.
+
 #include <iostream>
 #include <string>
 #include <thread>

@@ -1,3 +1,9 @@
+//A program to showcase detach(). The main thread will call two worker threads.
+//One worker thread will display the current infromation continuously in the
+//background. The other worker thread will verify the input. Once the correct
+//input is given, the verifying thread will join with the main thread, and the
+//infromation thread will terminate when the program is terminated.
+
 #include<iostream>
 #include<string>
 #include<thread>
