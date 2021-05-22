@@ -1,4 +1,4 @@
-all: SimpleThreads Join Detach
+all: SimpleThreads Join Detach Ownership
 
 SimpleThreads: SimpleThreads.o
 	g++ -o SimpleThreads SimpleThreads.o -pthread
@@ -21,5 +21,12 @@ Detach: Detach.o
 Detach.o: Detach.cpp
 	g++ -c -Wall Detach.cpp
 
+Ownership: Ownership.o
+	g++ -o Ownership Ownership.o -pthread
+	rm Ownership.o
+
+Ownership.o:
+	g++ -c -Wall Ownership.cpp
+
 clean:
-	rm SimpleThreads Join Detach
+	rm SimpleThreads Join Detach Ownership *.o
