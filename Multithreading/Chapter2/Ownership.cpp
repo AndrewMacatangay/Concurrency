@@ -1,3 +1,8 @@
+//This program is intended to show how ownership of a
+//thread can be tranferred to other threads via std::move.
+//Only threads with an associated thead of execution
+//need to call .join() at the end.
+
 #include<iostream>
 #include<utility>
 #include<thread>
