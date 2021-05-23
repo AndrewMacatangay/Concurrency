@@ -1,4 +1,4 @@
-all: SimpleThreads Join Detach Ownership Guard
+all: SimpleThreads Join Detach Ownership Guard Vector
 
 SimpleThreads: SimpleThreads.o
 	g++ -o SimpleThreads SimpleThreads.o -pthread
@@ -35,5 +35,12 @@ Guard: Guard.o
 Guard.o: Guard.cpp
 	g++ -c -Wall Guard.cpp
 
+Vector: Vector.o
+	g++ -o Vector Vector.o -pthread
+	rm Vector.o
+
+Vector.o: Vector.cpp
+	g++ -c -Wall Vector.cpp
+
 clean:
-	rm SimpleThreads Join Detach Ownership Guard *.o
+	rm SimpleThreads Join Detach Ownership Guard Vector *.o
