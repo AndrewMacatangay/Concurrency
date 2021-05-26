@@ -1,1 +1,3 @@
 5/21/2021 - Rename directories/files before continuing to read Chapter 2
+5/25/2021 - Start chapter 3 and thnk of program that can demonstrate mutexes
+            Review SimpleMutex.cpp for race conditions
