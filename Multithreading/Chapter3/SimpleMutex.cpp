@@ -1,4 +1,6 @@
-//Play around with this more. There are still race conditions
+//This program uses a mutex to stop 2 threads from acquiring
+//the same resource at the same time (cout). Although there
+//exists a mutex, any thread can still execute before  the other.
 
 #include <iostream>
 #include <thread>
@@ -20,7 +22,7 @@ void func1(int threadNumber)
 {
         m.lock();
 
-        for (static int x = 0; x < 100; x++)
+        for (int x = 0; x < 100; x++)
         	print(threadNumber, x);
 
         m.unlock();
@@ -29,12 +31,12 @@ void func1(int threadNumber)
 
 void func2(int threadNumber)
 {
-        m.lock();
+        //m.lock();
 
-        for (static int x = 0; x < 100; x++)
+        for (int x = 0; x < 100; x++)
         	print(threadNumber, x);
 
-        m.unlock();
+        //m.unlock();
 }
 
 int main()
