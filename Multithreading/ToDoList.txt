@@ -1,3 +1,5 @@
 5/21/2021 - Rename directories/files before continuing to read Chapter 2
 5/25/2021 - Start chapter 3 and thnk of program that can demonstrate mutexes
             Review SimpleMutex.cpp for race conditions
+5/27/2021 - Change Rumor.cpp to Protect.cpp to demonstate protecting shared data
+            Add example where you pass a function as a parameter to another function
