@@ -2,4 +2,5 @@
 5/25/2021 - Start chapter 3 and thnk of program that can demonstrate mutexes
             Review SimpleMutex.cpp for race conditions
 5/27/2021 - Change Rumor.cpp to Protect.cpp to demonstate protecting shared data
-            Add example where you pass a function as a parameter to another function
+	    Add example where you pass a function as a parameter to another function
+5/28/2021 - Read into deadlocks and think of a useful project you can create
