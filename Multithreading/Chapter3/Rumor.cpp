@@ -7,70 +7,80 @@ using namespace std;
 //Protecting shared data
 //Protect from passing functions/references/pointers
 
-//This is a malicious function that can be passed into
-//one of the Company member functions to zero out the
-//balance
-void badFunc(int& balance)
+void badFunc(vector<string>& formula)
 {
-	balance = 0;
+	formula.clear();
 }
 
 class Company
 {
 	private:
 		int companyBalance;
+		vector<string> secretFormula;
 		mutex m;
+
+		vector<string> getFormula()
+		{
+			lock_guard<mutex> l(m);
+			return secretFormula;
+		}
+		
 	public:
 		Company()
 		{
 			companyBalance = 1000000000;
+			secretFormula = {"sesame seed buns", "sea cheese", "sea lettuce",
+					 "sea tomatoes", "pickles", "ketchup", "mayonnaise",
+					 "sea onions", "secret sauce", "chum"};
+			
+			cout << "Krabby Patty Recipe: " << endl;
+			for (string x : getFormula())
+				cout << x << endl;
+			cout << endl;
 		}
 
-		int getCompanyBalance()
-		{
-			return companyBalance;
-		}
-
-		int& getCompanyBalanceRef()
-		{
-			lock_guard<mutex> l(m);
-			return companyBalance;
-		}
-
-		int* getCompanyBalanceVal()
+		vector<string>& getFormulaRef()
 		{
 			lock_guard<mutex> l(m);
-			return &companyBalance;
+			return secretFormula;
 		}
 
-		void runFunc(void fun(int&))
+		vector<string>* getFormulaVal()
 		{
-			fun(companyBalance);
+			lock_guard<mutex> l(m);
+			return &secretFormula;
+		}
+
+		void runFunc(void func(vector<string>&))
+		{
+			func(secretFormula);
+
+			cout << "Krabby Patty Recipe: " << endl;
+			for (string x : getFormula())
+				cout << x << endl;
+			cout << endl;
 		}
 };
 
 //An example of what not to do
 int main()
 {
-	//The company is initialized with a billion dollars
-	Company Amazon;	
-	cout << "Company balance: " << Amazon.getCompanyBalance() << endl;
+	Company KrustyKrab;	
+
+	vector<string>& stolenFormula = KrustyKrab.getFormulaRef();
+	stolenFormula.erase(stolenFormula.begin() + 4);
+	cout << "Krabby Patty Recipe: " << endl;
+	for (string x : stolenFormula)
+		cout << x << endl;
+	cout << endl;
 	
-	//After passing a reference back to main, we can access the balance
-	//without going through the mutex
-	int& newBalance = Amazon.getCompanyBalanceRef();
-	newBalance = 1000000;
-	cout << "Company balance: " << Amazon.getCompanyBalance() << endl;
+	KrustyKrab.getFormulaVal()->insert(stolenFormula.begin() + 4, "pickles");
+	cout << "Krabby Patty Recipe: " << endl;
+	for (string x : *(KrustyKrab.getFormulaVal()))
+		cout << x << endl;
+	cout << endl;
 	
-	//After passing the address back to main, we can access the balance
-	//without going through the mutex
-	*(Amazon.getCompanyBalanceVal()) = 1000;
-	cout << "Company balance: " << Amazon.getCompanyBalance() << endl;
-	
-	//After passing a function for the member function to execute, we
-	//can access the balance without going through the mutex
-	Amazon.runFunc(badFunc);
-	cout << "Company balance: " << Amazon.getCompanyBalance() << endl;
+	KrustyKrab.runFunc(badFunc);
 	
 	return 0;
 }
