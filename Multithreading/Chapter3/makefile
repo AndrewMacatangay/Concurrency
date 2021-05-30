@@ -1,4 +1,4 @@
-all: Race SimpleMutex LockRace Protect
+all: Race SimpleMutex LockRace Protect SimpleDeadlock
 
 Race:
 	g++ -g -Wall -o Race Race.cpp -pthread
@@ -12,5 +12,8 @@ LockRace:
 Protect:
 	g++ -g -Wall -o Protect Protect.cpp -pthread
 
+SimpleDeadlock:
+	g++ -g -Wall -o SimpleDeadlock SimpleDeadlock.cpp -pthread
+
 clean:
-	rm Race SimpleMutex LockRace Protect
+	rm Race SimpleMutex LockRace Protect SimpleDeadlock
