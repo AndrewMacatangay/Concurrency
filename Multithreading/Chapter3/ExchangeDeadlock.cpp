@@ -39,6 +39,8 @@ class someClass
 			lock_guard<mutex> l2(other.m);			
 			
 			//This code is correct
+			//lock() provides an all-or-nothing semantic for
+			//locking the mutexes
 			//lock(m, other.m);
 			//lock_guard<mutex> l1(m, adopt_lock);
 			//for(int x = 0; x < 20000; x++);	
