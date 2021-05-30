@@ -30,9 +30,20 @@ class someClass
 		//actually catch the deadlock
 		void exchangeData(someClass& other)
 		{	
+			if (this == &other)
+				return;
+			
+			//This code is wrong
 			lock_guard<mutex> l1(m);
 			for(int x = 0; x < 20000; x++);
 			lock_guard<mutex> l2(other.m);			
+			
+			//This code is correct
+			//lock(m, other.m);
+			//lock_guard<mutex> l1(m, adopt_lock);
+			//for(int x = 0; x < 20000; x++);	
+			//lock_guard<mutex> l2(other.m, adopt_lock);
+
 			swap(data, other.data);
 			cout << "Thread number: " << threadNumber << endl;
 			cout << "Data: " << data << endl << endl;
