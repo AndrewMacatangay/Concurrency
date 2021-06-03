@@ -12,8 +12,20 @@ class Sum
 
 		void Sum1to5()
 		{
+			int localSum = 0;
+
 			for(int x = 1; x < 6; x++)
-				sum += x;
+			{
+				//unique_lock<mutex> l(m);
+				//l.lock();
+				localSum += x;
+				//l.unlock();
+			}
+			
+			unique_lock<mutex> l(m);
+			l.lock();
+			sum = localSum;
+			l.unlock();
 		}
 	public:
 		Sum()
@@ -38,7 +50,7 @@ class Sum
 int main()
 {
 	Sum mySum;
-	this_thread::sleep_for(3s);
+	//this_thread::sleep_for(3s);
 	cout << mySum.getSum() << endl;
 	return 0;
 }
