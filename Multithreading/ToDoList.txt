@@ -5,3 +5,4 @@
 	    Add example where you pass a function as a parameter to another function
 5/28/2021 - Read into deadlocks and think of a useful project you can create
 5/29/2021 - Finish reading about deadlocks. Implement code if needed
+6/3/2021  - Watch video on unique_lock and lazy initialization. Try to finish chapter 3
