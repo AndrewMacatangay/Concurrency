@@ -1,3 +1,9 @@
+//This program demonstrates how a coarse grain lock works.
+//The lock covers a larger portion of the code which can
+//decrease the risk of deadlocks (acquiring less locks),
+//but it doesn't allow as much concurrency since one
+//thread is holding the lock for a longer period of time.
+
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -8,22 +14,18 @@ mutex m;
 
 void func1()
 {
+	unique_lock<mutex> l(m);
+	
 	for(int x = 1; x <= 500000; x++)
-	{
-		m.lock();
 		sum += x;
-		m.unlock();
-	}
 }
 
 void func2()
 {
+	unique_lock<mutex> l(m);
+	
 	for(int x = 500001; x <= 1000000; x++)
-	{
-		m.lock();
 		sum += x;
-		m.unlock();
-	}
 }
 
 int main()

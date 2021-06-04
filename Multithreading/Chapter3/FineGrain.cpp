@@ -1,56 +1,41 @@
+//The lock covers a smaller portion of the code which can
+//increase the risk of deadlocks (acquiring more locks),
+//has a higher overhead from having to acquire many locks,
+//but it allows greater concurrency since one thread is 
+//holding the lock for a shorter period of time.
+
 #include <iostream>
 #include <thread>
 #include <mutex>
 using namespace std;
 
-class Sum
+long sum = 0;
+mutex m;
+
+void func1()
 {
-	private:
-		int sum;
-		thread t1, t2;
-		mutex m;
+	for(int x = 1; x <= 500000; x++)
+	{
+		unique_lock<mutex> l(m);
+		sum += x;
+	}
+}
 
-		void Sum1to5()
-		{
-			int localSum = 0;
-
-			for(int x = 1; x < 6; x++)
-			{
-				//unique_lock<mutex> l(m);
-				//l.lock();
-				localSum += x;
-				//l.unlock();
-			}
-			
-			unique_lock<mutex> l(m);
-			l.lock();
-			sum = localSum;
-			l.unlock();
-		}
-	public:
-		Sum()
-		{
-			sum = 0;
-			t1 = thread(&Sum::Sum1to5, this);
-			t2 = thread(&Sum::Sum1to5, this);
-		}
-		
-		~Sum()
-		{
-			t1.join();
-			t2.join();
-		}
-
-		int getSum()
-		{
-			return sum;
-		}
-};
+void func2()
+{
+	for(int x = 500001; x <= 1000000; x++)
+	{	
+		unique_lock<mutex> l(m);
+		sum += x;
+	}
+}
 
 int main()
 {
-	Sum mySum;
-	//this_thread::sleep_for(3s);
-	cout << mySum.getSum() << endl;
-	return 0;
+	thread t1(func1);
+	thread t2(func2);
+
+	t1.join();
+	t2.join();
+	cout << "Sum: " << sum << endl;
 }
