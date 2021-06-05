@@ -1,4 +1,4 @@
-all: Race SimpleMutex LockRace Protect SimpleDeadlock ExchangeDeadlock FineGrain CoarseGrain OptimizedFineGrain
+all: Race SimpleMutex LockRace Protect SimpleDeadlock ExchangeDeadlock FineGrain CoarseGrain OptimizedFineGrain LazyInitialization
 
 Race:
 	g++ -g -Wall -o Race Race.cpp -pthread
@@ -27,5 +27,8 @@ CoarseGrain:
 OptimizedFineGrain:
 	g++ -g -Wall -o OptimizedFineGrain OptimizedFineGrain.cpp -pthread
 
+LazyInitialization:
+	g++ -g -Wall -o LazyInitialization LazyInitialization.cpp -pthread
+
 clean:
-	rm Race SimpleMutex LockRace Protect SimpleDeadlock ExchangeDeadlock FineGrain CoarseGrain OptimizedFineGrain
+	rm Race SimpleMutex LockRace Protect SimpleDeadlock ExchangeDeadlock FineGrain CoarseGrain OptimizedFineGrain LazyInitialization
