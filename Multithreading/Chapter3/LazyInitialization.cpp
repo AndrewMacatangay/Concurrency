@@ -1,3 +1,10 @@
+//This program demonstrates the use of lazy initialization.
+//When creating objects, we might need to initialize some
+//object in the constructor that takes up a lot of resources.
+//To combat this, we can initialize only when a resource is
+//needed. Using call_once and once_flag allows us to initialize
+//only once to avoid needing to acquire locks for multithreading.
+
 #include <iostream>
 #include <vector>
 #include <mutex>
