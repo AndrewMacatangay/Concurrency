@@ -8,3 +8,5 @@
 6/3/2021  - Watch video on unique_lock and lazy initialization
             Try to finish reading chapter 3
 6/4/2021  - Start reading chapter 4
+6/7/2021  - Create a future, promise, and future + promise example
+            Read more about shared pointers and shared futures
