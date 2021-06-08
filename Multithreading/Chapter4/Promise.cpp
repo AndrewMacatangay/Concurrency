@@ -11,8 +11,8 @@ double giveLoan(future<double>& f1)
 	double loan = f1.get();
 
 	//The initial loan was returned to the lender
-	//
-	return loan;
+	//with interest
+	return loan * 1.1;
 }
 
 int main()
