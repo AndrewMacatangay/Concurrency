@@ -4,35 +4,58 @@
 #include <future>
 using namespace std;
 
-double giveLoan(future<double>& f1)
+class BankAccount
 {
-	//f1 waits and finally recieves the value from
-	//main() and the promise is fulfilled
-	double loan = f1.get();
+	private:
+		double balance;
+	public:
+		BankAccount(double balance) : balance(balance){ }
 
-	//The initial loan was returned to the lender
-	//with interest
-	return loan * 1.1;
-}
+		double invest(future<double>& promisedLoan)
+		{
+			double loan = promisedLoan.get();
+			balance += loan;
+
+			//Do some investing here to make money
+
+			double interest;
+			return loan + interest; 
+		}
+};
+
+class Contract
+{
+	private:
+		BankAccount& Lender, Lendee;
+		double loan, interest;
+	public:
+		Contract(BankAccount& Lender, BankAccount& Lendee) : Lender(Lender), Lendee(Lendee){ }
+
+		void invokeContract(double loan, double interest)
+		{
+
+			this->loan = loan;
+			this->interest = interest;
+
+			promise<double> p;
+
+			future<double> f1 = p.get_future();
+			
+			future<double> f2 = async(&BankAccount::invest, &Lendee, ref(f1));
+
+			p.set_value(100);
+
+			cout << f2.get() << endl;
+		}
+};
 
 int main()
 {
-	//A promise is made
-	promise<double> p;
+	BankAccount Lender(1000000);
+	BankAccount Lendee(100000);
 
-	//f1 is able to retrieve a value from the main()
-	//function in the future as promised
-	future<double> f1 = p.get_future();
-
-	//f2 is able to retrieve a value from the giveLoan()
-	//function in the future
-	future<double> f2 = async(giveLoan, ref(f1));
-	
-	//The value promised is sent to the future f1
-	p.set_value(100);
-
-	//f2 revieves the return from giveLoan
-	cout << f2.get() << endl;
+	Contract loan(Lender, Lendee);
+	loan.invokeContract(1000, 1000);
 
 	return 0;
 }
