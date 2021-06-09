@@ -1,3 +1,10 @@
+//This program demonstates the use of promise and futures. We will use a 
+//transaction system to outline how this works. The lendee will lend a lender
+//some amount of money. A promise must be made for the lender to recieve
+//the money from the lender who will send the money from a separate thread.
+//Another future will be made for the lender to recieve the amount due from
+//the lendee. Note that this does not protect against race conditions.
+
 #include <iostream>
 #include <iomanip>
 #include <functional>
@@ -57,7 +64,7 @@ class Contract
 		BankAccount &Lender, &Lendee;
 		double loan, interest;
 	public:
-		//Initislization list needed here to initialize the references
+		//Initialization list needed here to initialize the references
 		Contract(BankAccount& Lender, BankAccount& Lendee) : Lender(Lender), Lendee(Lendee)
 		{
 			cout << "The contract is made!" << endl;
@@ -90,6 +97,7 @@ class Contract
 			//Send the contract information to the Lendee to verify
 			p.set_value({this->loan, this->interest});
 
+			//Complete the transaction by recieving the owed amount
 			Lender.bankTransaction(f2.get());
 		}
 };

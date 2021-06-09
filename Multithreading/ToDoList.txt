@@ -10,3 +10,4 @@
 6/4/2021  - Start reading chapter 4
 6/7/2021  - Create a future, promise, and future + promise example
             Read more about shared pointers and shared futures
+6/8/2021  - Read about callable objects and packaged_task
