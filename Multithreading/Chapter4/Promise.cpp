@@ -75,6 +75,7 @@ class Contract
 		{
 			cout << "The contract has been invoked!" << endl;
 			cout << "The loan is $" << loan << " with an interest rate of " << interest << "%" << endl << endl;
+			this_thread::sleep_for(1s);
 
 			//Contract information is saved internally within the class
 			this->loan = loan;
@@ -111,12 +112,14 @@ int main()
 	cout << fixed << setprecision(2);
 	cout << "The lender has $" << Lender.getBalance() << endl;
 	cout << "The lendee has $" << Lendee.getBalance() << endl << endl;
+	this_thread::sleep_for(1s);
 
 	//Create a contract between the two individuals and invoke it
 	Contract loan(Lender, Lendee);
 	loan.invokeContract(10000, 1.1);
 
 	cout << "The contract has been fulfilled and terminated!" << endl << endl;
+	this_thread::sleep_for(1s);
 	cout << "The lender has $" << Lender.getBalance() << endl;
 	cout << "The lendee has $" << Lendee.getBalance() << endl;
 
