@@ -11,3 +11,6 @@
 6/7/2021  - Create a future, promise, and future + promise example
             Read more about shared pointers and shared futures
 6/8/2021  - Read about callable objects and packaged_task
+6/9/2021  - Add sleeps to Promise.cpp
+6/11/2021 - Finish the rest of the packaged_task example
+	    Read the rest of section 4.2 and watch video for time libraries
