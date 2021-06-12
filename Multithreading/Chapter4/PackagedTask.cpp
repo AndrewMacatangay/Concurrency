@@ -12,12 +12,9 @@ int task(int x)
 	return x;
 }
 
-//You want it so that certain threads will run certain
-//tasks. Move the tasks into a thread.
-
-//This class will manage all packaged_tasks and futures
-//necessary for running the threads that will be created
-//in main()
+//This class will manage all packaged_tasks, futures, and
+//threads necessary for running the threads that will be
+//created in main()
 class TaskQueueWrapper
 {
 	private:
@@ -26,12 +23,16 @@ class TaskQueueWrapper
 		int size = 0;
 		mutex m;
 		condition_variable cv;
+	
 	public:
 		//Push the tasks onto a queue
 		void push_back(packaged_task<int(int)> pt)
 		{
 			tasks.push_back(move(pt));
 			futures.push_back(tasks[size++].get_future());
+			
+			//Notify a thread that there is a task available
+			//to be associated with a thread
 			cv.notify_one();
 		}
 
@@ -39,15 +40,20 @@ class TaskQueueWrapper
 		//creating the threads of execution
 		packaged_task<int(int)> pop_front()
 		{
+			//Wait until there is a task in the queue before
+			//attempting to pop a task from the queue
 			unique_lock<mutex> l(m);
 			cv.wait(l, [this]{ return !tasks.empty(); });
+
 			packaged_task<int(int)> task = move(tasks.front());
 			tasks.pop_front();
 			size--;
 
 			return task;
 		}
-
+		
+		//This function will execute a thread based on the next
+		//task in the queue
 		void launchThread(int value)
 		{
 			//No lock needed here since there is a lock within
@@ -56,6 +62,8 @@ class TaskQueueWrapper
 			thread(move(pop_front()), value).detach();
 		}
 
+		//Retrieve the value from the front of the future queue,
+		//then discard the future after usage
 		int get()
 		{
 			lock_guard<mutex> l(m);
@@ -83,7 +91,7 @@ int main()
 	
 
 	//The rest of the example will use a wrapper class that
-	//handles the packaged_tasks and futures
+	//handles the packaged_tasks, futures, and threads
 	TaskQueueWrapper tasks;
 
 	//Queue up the tasks
