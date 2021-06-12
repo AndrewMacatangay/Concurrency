@@ -1,3 +1,12 @@
+//This program demostrates the usage of packaged_tasks. A packaged_task can
+//be moved into a thread to execute some function. The async() function has
+//two launch policies, asynchonous or deferred. The thread would be created
+//alongside the creation of a future, or when the .get() function is called.
+//In constrast, for packaged tasks, a thread is not created, but packaged
+//tasks can be moved (because they are non-copyable) to a to-be-constructed
+//thread to be executed. Implementation may depends on timing/available
+//resources.
+
 #include<iostream>
 #include<deque>
 #include<thread>
