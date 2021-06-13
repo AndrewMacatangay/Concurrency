@@ -15,3 +15,5 @@
 6/11/2021 - Finish the rest of the packaged_task example
 	    Read the rest of section 4.2 and watch video for time libraries
 6/12/2021 - Think of a project to implement after finishing Chapter 4
+6/13/2021 - Read more about clocks and the chrono library
+	    Start examples for chrono library
