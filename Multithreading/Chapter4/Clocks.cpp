@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <thread>
 #include <mutex>
 #include <future>
@@ -10,15 +9,27 @@ using namespace std;
 //Network connection refreshes every 1s.
 
 timed_mutex m;
+mutex m2;
 
 int func(int threadNumber)
 {
 	unique_lock<timed_mutex> l(m, defer_lock);
-	while(!l.try_lock_for(chrono::milliseconds(200)))
+	unique_lock<mutex> l2(m2, defer_lock);
+
+	while(!l.try_lock_for(chrono::milliseconds(400)))
 	{
-		cout << "Waiting..." << endl;
+		l2.lock();
+		cout << "Player " << threadNumber << " attempts to pick the lock and fails...\n";
+		l2.unlock();
 	}
+
+	cout << "Player " << threadNumber << " opens the chest!\n";
 	this_thread::sleep_for(1s);
+
+	l2.lock();
+	cout << "Player " << threadNumber << " successfully loots the chest!\n"; 
+	l2.unlock();
+
 	return threadNumber;
 }
 
@@ -26,14 +37,12 @@ int func(int threadNumber)
 int main()
 {
 	vector<future<int>> futures(4);
+	
 	for (int x = 0; x < 4; x++)
-	{
-		futures[x] = async(launch::async, func, x);
-		//cout << f.get() << endl;
-	}
+		futures[x] = async(launch::async, func, x + 1);
 
 	for (int x = 0; x < 4; x++)
-		cout << futures[x].get() << endl;
+		futures[x].get();
 
 	return 0;
 }
