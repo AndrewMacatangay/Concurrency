@@ -1,17 +1,39 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <thread>
+#include <mutex>
+#include <future>
 #include <chrono>
 using namespace std;
 
+//Network connection refreshes every 1s.
+
+timed_mutex m;
+
+int func(int threadNumber)
+{
+	unique_lock<timed_mutex> l(m, defer_lock);
+	while(!l.try_lock_for(chrono::milliseconds(200)))
+	{
+		cout << "Waiting..." << endl;
+	}
+	this_thread::sleep_for(1s);
+	return threadNumber;
+}
+
+
 int main()
 {
-	cout << "System clock:" << endl;
-	cout << chrono::system_clock::to_time_t(chrono::system_clock::now()) << endl << endl;
+	vector<future<int>> futures(4);
+	for (int x = 0; x < 4; x++)
+	{
+		futures[x] = async(launch::async, func, x);
+		//cout << f.get() << endl;
+	}
 
-	//cout << "Steady clock:" << endl;
-	//cout << chrono::system_clock::to_time_t(chrono::steady_clock::now()) << endl << endl;
-
-	//cout << "High resolution clock:" << endl;
-	//cout << chrono::high_resolution_clock::now() << endl << endl;
+	for (int x = 0; x < 4; x++)
+		cout << futures[x].get() << endl;
 
 	return 0;
 }
