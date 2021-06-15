@@ -1,4 +1,4 @@
-all: ConditionVariable Future Promise SharedFuture PackagedTask Clocks
+all: ConditionVariable Future Promise SharedFuture PackagedTask Chrono
 
 ConditionVariable: ConditionVariable.cpp
 	g++ -g -o ConditionVariable ConditionVariable.cpp -pthread
@@ -15,8 +15,8 @@ SharedFuture: SharedFuture.cpp
 PackagedTask: PackagedTask.cpp
 	g++ -g -o PackagedTask PackagedTask.cpp -pthread
 
-Clocks: Clocks.cpp
-	g++ -g -o Clocks Clocks.cpp -pthread
+Chrono: Chrono.cpp
+	g++ -g -o Chrono Chrono.cpp -pthread
 
 clean: 
-	rm ConditionVariable Future Promise SharedFuture PackagedTask Clocks
+	rm ConditionVariable Future Promise SharedFuture PackagedTask Chrono
