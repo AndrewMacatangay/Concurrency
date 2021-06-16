@@ -1,8 +1,8 @@
-build:
-	g++ -g -Wall Restaurant.cpp -pthread
+TreeSearch: TreeSearch.cpp
+	g++ -g -Wall -o TreeSearch TreeSearch.cpp -pthread
 
-run:
-	./a.out
+run: TreeSearch
+	./TreeSearch
 
 clean:
-	rm a.out
+	rm TreeSearch

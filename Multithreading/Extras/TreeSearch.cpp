@@ -3,6 +3,7 @@
 #include<time.h>
 #include<thread>
 #include<mutex>
+#include<future>
 using namespace std;
 
 struct Node
@@ -50,8 +51,18 @@ int search(Node* cur, int value)
 		return value;
 	
 	//Add a future here?
+	future<int> leftFuture = async(search, cur->left, value);
+	future<int> rightFuture = async(search, cur->right, value);
 
-	cur->value > value ? search(cur->left, value) : search(cur->right, value);
+	int leftFound = leftFuture.get();
+	int rightFound = rightFuture.get();
+
+	if (leftFound == rightFound)
+		return -1;
+
+	return leftFound > rightFound ? leftFound : rightFound;
+
+	//cur->value > value ? search(cur->left, value) : search(cur->right, value);
 }
 
 int main()
