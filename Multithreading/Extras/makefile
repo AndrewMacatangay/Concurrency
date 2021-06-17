@@ -1,8 +1,10 @@
+all: TreeSearch TreeBuild
+
 TreeSearch: TreeSearch.cpp
 	g++ -g -Wall -o TreeSearch TreeSearch.cpp -pthread
 
-run: TreeSearch
-	./TreeSearch
+TreeBuild: TreeBuild.cpp
+	g++ -g -Wall -o TreeBuild TreeBuild.cpp -pthread
 
 clean:
-	rm TreeSearch
+	rm TreeSearch TreeBuild
