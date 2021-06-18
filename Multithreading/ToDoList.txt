@@ -17,3 +17,7 @@
 6/12/2021 - Think of a project to implement after finishing Chapter 4
 6/13/2021 - Read more about clocks and the chrono library
 	    Start examples for chrono library
+6/15/2021 - Finish reading chapter 4
+	    Brainstorm idea for a project on everything learned so far
+6/18/2021 - Create parts of binary search tree class with concurrent operations
+	    Get familiar with optimization techniques
