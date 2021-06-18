@@ -2,13 +2,15 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
-#include <thread>
+#include <chrono>
 #include <future>
 using namespace std;
 
+int threadCount = 0;
+
 class Node
 {
-		public:
+	public:
 		Node* left;
 		Node* right;
 		int value;
@@ -26,6 +28,7 @@ void addNode(Node* parent, Node*& cur, int value)
 	else if (!cur)
 	{	
 		(parent->value > value ? parent->left : parent->right) = new Node(value);
+		this_thread::sleep_for(1ms);
 		return;
 	}
 	else if (cur->value == value)
@@ -44,19 +47,31 @@ void inOrder(Node* cur)
 	inOrder(cur->right);
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	Node* head = nullptr;
 	vector<future<void>> futures;
-
-	for (int x = 0; x < 10000; x++)
+	int threadLimit = atoi(argv[1]);
+	
+	//Limit number of threads to N + 1, where N is the number of cores in CPU
+	for (int x = 0; x < 100000; x++)
 	{
 		//addNode(nullptr, head, rand() % 10000 + 1);
-		futures.push_back(async(addNode, nullptr, ref(head), rand() % 10000 + 1));
+		//async can start a new thread, or optimize and use current thread
+		if (threadCount < threadLimit)
+		{
+			futures.push_back(async(addNode, nullptr, ref(head), rand() % 100000 + 1));
+			threadCount++;
+		}
+		else
+		{
+			futures.clear();
+			threadCount = 0;
+		}
 	}
 
-	for(future<void>& f : futures)
-		f.get();
+	//for(future<void>& f : futures)
+		//f.get();
 
 	//inOrder(head);
 	//cout << endl;

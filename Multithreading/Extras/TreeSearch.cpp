@@ -92,7 +92,7 @@ class Tree
 
 int main()
 {
-	Tree tree(1000);
+	Tree tree(10);
 	tree.inOrder();
 
 	cout << endl;
