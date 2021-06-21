@@ -5,6 +5,8 @@
 #include <chrono>
 #include <future>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 using namespace std;
 
 class Tree
@@ -26,20 +28,23 @@ class Tree
 	//Make these atomic as well
 	int threadLimit;
 	int numNodes;
+	recursive_mutex m;
+	condition_variable cv;
+	atomic<int> go;
 
 	public:
 
-	Tree(int t, int n) : head(nullptr), threadLimit(t), numNodes(n)
+	Tree(int t, int n) : head(nullptr), threadLimit(t), numNodes(n), go(0)
 	{
 		vector<future<void>> futures;
-		int threadCount = 0;
+		atomic<int> threadCount(0);
 
 		//Limit number of threads to N + 1, where N is the number of cores in CPU
 		for (int x = 0; x < numNodes; x++)
 		{
 			//addNode(nullptr, head, rand() % numNodes + 1);
 			//async can start a new thread, or optimize and use current thread
-			futures.push_back(async(&Tree::addNode, this, nullptr, ref(head), rand() % numNodes + 1));
+			futures.push_back(async(launch::async, &Tree::addNode, this, nullptr, ref(head), rand() % numNodes + 1));
 			threadCount++;
 			
 			if (threadCount > threadLimit)
@@ -52,6 +57,9 @@ class Tree
 
 	void addNode(Node* parent, Node*& cur, int value)
 	{
+		//Find a way to optimize this lock.
+		//The problem starts with 2 threads trying to establish a root node.
+		unique_lock<recursive_mutex> l(m);
 		if(!parent && !cur)
 		{
 			cur = new Node(value);
@@ -66,7 +74,6 @@ class Tree
 		}
 		//else if (cur->value == value)
 		//	return;
-
 		addNode(cur, (cur->rightNodes > cur->leftNodes ? cur->left : cur->right), value);
 	}
 
