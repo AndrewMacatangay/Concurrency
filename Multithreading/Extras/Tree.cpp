@@ -23,16 +23,15 @@ class Tree
 	};
 
 	Node* head;
-	//Make these atomic as well
 	int threadLimit;
 	int numNodes;
 	mutex m;
 	condition_variable cv;
-	atomic<int> count;
+	once_flag initFlag;
 
 	public:
 
-	Tree(int t, int n) : head(nullptr), threadLimit(t), numNodes(n), count(0)
+	Tree(int t, int n) : head(nullptr), threadLimit(t), numNodes(n)
 	{
 		vector<future<void>> futures;
 		atomic<int> threadCount(0);
@@ -71,38 +70,22 @@ class Tree
 	void addNode(Node* parent, Node*& cur, int value)
 	{
 		//Find a way to optimize this lock.
-		//The problem starts with 2 threads trying to establish a root node.
-		//unique_lock<recursive_mutex> l(m);
-		//if(!parent && !cur)
-		if (count.load() == 0)
+
+		call_once(initFlag, [&]{ cur = new Node(value); });
+
+		if (!cur)
 		{
-			unique_lock<mutex> l(m);
-			if(count.load() != 0)
-			{
-				//cout << "tset" << endl;
-				l.unlock();
-				addNode(nullptr, cur, value);
-			}
-			cur = new Node(value);
-			count++;
-			//cout << "test" << endl;
-			l.unlock();
-			return;
-		}
-		else if(!cur)
-		{
-			bool lr = parent->value > value;
+			//bool lr = parent->value > value;
 
 			unique_lock<mutex> l(m);
+			bool lr = parent->value > value;
 			//Retry node
 			if ((lr && parent->left) || (!lr && parent->right))
 			{	
 				l.unlock();
-				//Current is null, you are passing nullptr
-				//again when the parent's left/right has been updated
-				addNode(nullptr, parent, value);
+				addNode(parent, lr ? parent->left : parent->right, value);
 			}
-			count++;
+			//cout << "test" << endl;
 			(lr ? parent->left : parent->right) = new Node(value);
 			l.unlock();
 			this_thread::sleep_for(1ms);
