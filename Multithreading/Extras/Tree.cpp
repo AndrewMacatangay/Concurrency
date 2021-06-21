@@ -18,10 +18,8 @@ class Tree
 		Node* left;
 		Node* right;
 		int value;
-		atomic<int> leftNodes;
-		atomic<int> rightNodes;
 		
-		Node(int v) : left(nullptr), right(nullptr), value(v) , leftNodes(0), rightNodes(0) { }
+		Node(int v) : left(nullptr), right(nullptr), value(v) { }
 	};
 
 	Node* head;
@@ -55,21 +53,45 @@ class Tree
 		}
 	}
 
+	void clear(Node* cur)
+	{
+		if (!cur)
+			return;
+
+		clear(cur->left);
+		clear(cur->right);
+		delete cur;
+	}
+
+	~Tree()
+	{
+		clear(head);
+	}
+
 	void addNode(Node* parent, Node*& cur, int value)
 	{
 		//Find a way to optimize this lock.
 		//The problem starts with 2 threads trying to establish a root node.
 		//unique_lock<recursive_mutex> l(m);
 		//if(!parent && !cur)
-		if (!count)
+		if (count.load() == 0)
 		{
-			count++;
+			unique_lock<mutex> l(m);
+			if(count.load() != 0)
+			{
+				//cout << "tset" << endl;
+				l.unlock();
+				addNode(nullptr, cur, value);
+			}
 			cur = new Node(value);
+			count++;
+			//cout << "test" << endl;
+			l.unlock();
 			return;
 		}
 		else if(!cur)
 		{
-			bool lr = parent->rightNodes > parent->leftNodes;
+			bool lr = parent->value > value;
 
 			unique_lock<mutex> l(m);
 			//Retry node
@@ -78,18 +100,18 @@ class Tree
 				l.unlock();
 				//Current is null, you are passing nullptr
 				//again when the parent's left/right has been updated
-				addNode(parent, cur, value);
+				addNode(nullptr, parent, value);
 			}
 			count++;
 			(lr ? parent->left : parent->right) = new Node(value);
-			lr ? parent->leftNodes++ : parent->rightNodes++;
 			l.unlock();
 			this_thread::sleep_for(1ms);
 			return;
 		}
-		//else if (cur->value == value)
-		//	return;
-		addNode(cur, (cur->rightNodes > cur->leftNodes ? cur->left : cur->right), value);
+		else if (cur->value == value)
+			return;
+
+		addNode(cur, (cur->value > value ? cur->left : cur->right), value);
 	}
 
 	void _inOrder(Node* cur)
