@@ -25,7 +25,7 @@ class Tree
 	Node* head;
 	int threadLimit;
 	int numNodes;
-	//int count = 1;
+	int count = 1;
 	mutex m;
 	recursive_mutex rm;
 	condition_variable cv;
@@ -91,11 +91,13 @@ class Tree
 			//Retry node
 			//if ((lr && parent->left) || (!lr && parent->right))
 			if (cur)
-			{	
+			{
 				l.unlock();
 				//addNode(parent, lr ? parent->left : parent->right, value);
 				//addNode(parent, cur, value);
-				addNode(cur, lr ? cur->left : cur->right, value);
+				//addNode(cur, lr ? cur->left : cur->right, value);
+				//addNode(cur, cur->value > value ? cur->left : cur->right, value);
+				addNode(nullptr, head, value);
 			}
 			//cout << value << endl;
 			//count++;
