@@ -25,6 +25,7 @@ class Tree
 	Node* head;
 	int threadLimit;
 	int numNodes;
+	//int count = 1;
 	mutex m;
 	recursive_mutex rm;
 	condition_variable cv;
@@ -75,24 +76,32 @@ class Tree
 		call_once(initFlag, [&]{ cur = new Node(value); });
 
 		//Lock here?
-		unique_lock<recursive_mutex> l(rm);
+		//unique_lock<recursive_mutex> l(rm);
 
+		//This is the only condition where we make a change to the tree.
+		//Therefore, we should using some locking mechanism here to avoid
+		//race conditions. We don't want to lock anywhere else in this
+		//or else we give up parallelism.
 		if (!cur)
 		{
 			bool lr = parent->value > value;
 
-			//unique_lock<mutex> l(m);
+			unique_lock<mutex> l(m);
 			//bool lr = parent->value > value;
 			//Retry node
-			if ((lr && parent->left) || (!lr && parent->right))
+			//if ((lr && parent->left) || (!lr && parent->right))
+			if (cur)
 			{	
-				//l.unlock();
-				addNode(parent, lr ? parent->left : parent->right, value);
+				l.unlock();
+				//addNode(parent, lr ? parent->left : parent->right, value);
+				//addNode(parent, cur, value);
+				addNode(cur, lr ? cur->left : cur->right, value);
 			}
-			//cout << "test" << endl;
+			//cout << value << endl;
+			//count++;
 			(lr ? parent->left : parent->right) = new Node(value);
-			//l.unlock();
-			this_thread::sleep_for(1ms);
+			l.unlock();
+			//this_thread::sleep_for(1ms);
 			return;
 		}
 		else if (cur->value == value)
@@ -101,6 +110,7 @@ class Tree
 		addNode(cur, (cur->value > value ? cur->left : cur->right), value);
 	}
 
+	//1/500 chance of missing one node
 	void _inOrder(Node* cur)
 	{
 		if (!cur)
@@ -114,6 +124,7 @@ class Tree
 	void inOrder()
 	{
 		_inOrder(head);
+		//cout << endl << count << endl;
 	}
 };
 
