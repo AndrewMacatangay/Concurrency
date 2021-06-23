@@ -26,6 +26,7 @@ class Tree
 	int threadLimit;
 	int numNodes;
 	mutex m;
+	recursive_mutex rm;
 	condition_variable cv;
 	once_flag initFlag;
 
@@ -73,21 +74,24 @@ class Tree
 
 		call_once(initFlag, [&]{ cur = new Node(value); });
 
+		//Lock here?
+		unique_lock<recursive_mutex> l(rm);
+
 		if (!cur)
 		{
-			//bool lr = parent->value > value;
-
-			unique_lock<mutex> l(m);
 			bool lr = parent->value > value;
+
+			//unique_lock<mutex> l(m);
+			//bool lr = parent->value > value;
 			//Retry node
 			if ((lr && parent->left) || (!lr && parent->right))
 			{	
-				l.unlock();
+				//l.unlock();
 				addNode(parent, lr ? parent->left : parent->right, value);
 			}
 			//cout << "test" << endl;
 			(lr ? parent->left : parent->right) = new Node(value);
-			l.unlock();
+			//l.unlock();
 			this_thread::sleep_for(1ms);
 			return;
 		}
