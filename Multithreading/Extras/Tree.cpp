@@ -89,8 +89,8 @@ class Tree
 			unique_lock<mutex> l(m);
 			//bool lr = parent->value > value;
 			//Retry node
-			//if ((lr && parent->left) || (!lr && parent->right))
-			if (cur)
+			if ((lr && parent->left) || (!lr && parent->right))
+			//if (cur)
 			{
 				l.unlock();
 				//addNode(parent, lr ? parent->left : parent->right, value);
@@ -101,6 +101,11 @@ class Tree
 			}
 			//cout << value << endl;
 			//count++;
+			if (parent->value == value)
+			{
+				l.unlock();
+				return;
+			}
 			(lr ? parent->left : parent->right) = new Node(value);
 			l.unlock();
 			//this_thread::sleep_for(1ms);
@@ -118,8 +123,9 @@ class Tree
 		if (!cur)
 			return;
 
-		_inOrder(cur->left);
 		cout << cur->value << " ";
+		_inOrder(cur->left);
+		//cout << cur->value << " ";
 		_inOrder(cur->right);
 	}
 
