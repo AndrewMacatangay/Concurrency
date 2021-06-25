@@ -21,7 +21,7 @@ class Tree
 		Node(int v) : left(nullptr), right(nullptr), value(v) { }
 	};
 
-	Node* head;
+	Node* root;
 	int threadLimit;
 	int numNodes;
 	mutex m;
@@ -29,17 +29,15 @@ class Tree
 
 	public:
 
-	Tree(int t, int n) : head(nullptr), threadLimit(t), numNodes(n)
+	Tree(int t, int n) : root(nullptr), threadLimit(t), numNodes(n)
 	{
 		vector<future<void>> futures;
-		atomic<int> threadCount(0);
+		int threadCount = 0;
 
-		//Limit number of threads to N + 1, where N is the number of cores in CPU
 		for (int x = 0; x < numNodes; x++)
 		{
-			//addNode(nullptr, head, rand() % numNodes + 1);
 			//async can start a new thread, or optimize and use current thread
-			futures.push_back(async(launch::async, &Tree::addNode, this, nullptr, ref(head), rand() % numNodes + 1));
+			futures.push_back(async(launch::async, &Tree::addNode, this, nullptr, ref(root), rand() % numNodes + 1));
 			threadCount++;
 			
 			if (threadCount > threadLimit)
@@ -62,15 +60,15 @@ class Tree
 
 	~Tree()
 	{
-		clear(head);
+		clear(root);
 	}
 
 	void addNode(Node* parent, Node*& cur, int value)
 	{
 		call_once(initFlag, [&]{ cur = new Node(value); });
 		
-		if (!parent && head)
-			head->m.lock();
+		if (!parent && root)
+			root->m.lock();
 
 		if (!cur)
 		{
@@ -87,57 +85,16 @@ class Tree
 		}
 		
 		bool lr = cur->value > value;
-		if (lr && cur->left)
+
+		if ((lr && cur->left) || (!lr && cur->right))
 		{
-			cur->left->m.lock();
-			cur->m.unlock();
-		}
-		else if (!lr && cur->right)
-		{
-			cur->right->m.lock();
+			(lr ? cur->left : cur->right)->m.lock();
 			cur->m.unlock();
 		}
 
 		addNode(cur, lr ? cur->left : cur->right, value);
-		
-		/*if (!parent && head)
-			head->m.lock();
-
-		if (value < cur->value)
-		{
-			if (!cur->left)
-			{
-				cur->left = new Node(value);
-				cur->m.unlock();
-			}
-			else
-			{
-				cur->left->m.lock();
-				cur->m.unlock();
-				addNode(cur, cur->left, value);
-			}
-		}
-		else if (value > cur->value)
-		{
-			if (!cur->right)
-			{
-				cur->right = new Node(value);
-				cur->m.unlock();
-			}
-			else
-			{
-				cur->right->m.lock();
-				cur->m.unlock();
-				addNode(cur, cur->right, value);
-			}
-		}
-		else
-		{
-			cur->m.unlock();
-		}*/
 	}
 
-	//1/500 chance of missing one node
 	void _inOrder(Node* cur)
 	{
 		if (!cur)
@@ -145,19 +102,18 @@ class Tree
 
 		cout << cur->value << " ";
 		_inOrder(cur->left);
-		//cout << cur->value << " ";
 		_inOrder(cur->right);
 	}
 
 	void inOrder()
 	{
-		_inOrder(head);
-		//cout << endl << count << endl;
+		_inOrder(root);
 	}
 };
 
 int main(int argc, char** argv)
 {
+	//Number of threads the number of nodes
 	Tree tree(stoi(argv[1]), stoi(argv[2]));
 
 	if (argc > 3 && stoi(argv[3]))
