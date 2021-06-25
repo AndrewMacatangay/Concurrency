@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <chrono>
-#include <future>
+#include <thread>
 #include <atomic>
 #include <mutex>
 using namespace std;
@@ -31,20 +31,21 @@ class Tree
 
 	Tree(int t, int n) : root(nullptr), threadLimit(t), numNodes(n)
 	{
-		vector<future<void>> futures;
-		int threadCount = 0;
+		//vector<future<void>> futures;
+		//int threadCount = 0;
 
 		for (int x = 0; x < numNodes; x++)
 		{
 			//async can start a new thread, or optimize and use current thread
-			futures.push_back(async(launch::async, &Tree::addNode, this, nullptr, ref(root), rand() % numNodes + 1));
-			threadCount++;
+			//futures.push_back(async(launch::async, &Tree::addNode, this, nullptr, ref(root), rand() % numNodes + 1));
+			//threadCount++;
 			
-			if (threadCount > threadLimit)
-			{
-				futures.clear();
-				threadCount = 0;
-			}
+			//if (threadCount > threadLimit)
+			//{
+			//	futures.clear();
+			//	threadCount = 0;
+			//}
+			/*future<void> f =*/ thread(&Tree::addNode, this, nullptr, ref(root), rand() % numNodes + 1).detach();
 		}
 	}
 
