@@ -68,7 +68,7 @@ class Tree
 	void addNode(Node* parent, Node*& cur, int value)
 	{
 		call_once(initFlag, [&]{ cur = new Node(value); });
-		/*
+		
 		if (!parent && head)
 			head->m.lock();
 
@@ -88,18 +88,20 @@ class Tree
 		
 		bool lr = cur->value > value;
 		if (lr && cur->left)
+		{
 			cur->left->m.lock();
+			cur->m.unlock();
+		}
 		else if (!lr && cur->right)
+		{
 			cur->right->m.lock();
-		
-		cur->m.unlock();
+			cur->m.unlock();
+		}
 
 		addNode(cur, lr ? cur->left : cur->right, value);
-		*/
-		if (!parent && head)
-		{
+		
+		/*if (!parent && head)
 			head->m.lock();
-		}
 
 		if (value < cur->value)
 		{
@@ -132,7 +134,7 @@ class Tree
 		else
 		{
 			cur->m.unlock();
-		}
+		}*/
 	}
 
 	//1/500 chance of missing one node
