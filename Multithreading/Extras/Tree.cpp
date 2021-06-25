@@ -6,7 +6,6 @@
 #include <future>
 #include <atomic>
 #include <mutex>
-#include <condition_variable>
 using namespace std;
 
 class Tree
@@ -18,17 +17,14 @@ class Tree
 		Node* left;
 		Node* right;
 		int value;
-		
+		mutex m;		
 		Node(int v) : left(nullptr), right(nullptr), value(v) { }
 	};
 
 	Node* head;
 	int threadLimit;
 	int numNodes;
-	int count = 1;
 	mutex m;
-	recursive_mutex rm;
-	condition_variable cv;
 	once_flag initFlag;
 
 	public:
@@ -71,50 +67,72 @@ class Tree
 
 	void addNode(Node* parent, Node*& cur, int value)
 	{
-		//Find a way to optimize this lock.
-
 		call_once(initFlag, [&]{ cur = new Node(value); });
+		/*
+		if (!parent && head)
+			head->m.lock();
 
-		//Lock here?
-		//unique_lock<recursive_mutex> l(rm);
-
-		//This is the only condition where we make a change to the tree.
-		//Therefore, we should using some locking mechanism here to avoid
-		//race conditions. We don't want to lock anywhere else in this
-		//or else we give up parallelism.
 		if (!cur)
 		{
 			bool lr = parent->value > value;
-
-			unique_lock<mutex> l(m);
-			//bool lr = parent->value > value;
-			//Retry node
-			if ((lr && parent->left) || (!lr && parent->right))
-			//if (cur)
-			{
-				l.unlock();
-				//addNode(parent, lr ? parent->left : parent->right, value);
-				//addNode(parent, cur, value);
-				//addNode(cur, lr ? cur->left : cur->right, value);
-				//addNode(cur, cur->value > value ? cur->left : cur->right, value);
-				addNode(nullptr, head, value);
-			}
-			//cout << value << endl;
-			//count++;
-			if (parent->value == value)
-			{
-				l.unlock();
-				return;
-			}
 			(lr ? parent->left : parent->right) = new Node(value);
-			l.unlock();
+			parent->m.unlock();
 			//this_thread::sleep_for(1ms);
 			return;
 		}
 		else if (cur->value == value)
+		{
+			cur->m.unlock();
 			return;
+		}
+		
+		bool lr = cur->value > value;
+		if (lr && cur->left)
+			cur->left->m.lock();
+		else if (!lr && cur->right)
+			cur->right->m.lock();
+		
+		cur->m.unlock();
 
-		addNode(cur, (cur->value > value ? cur->left : cur->right), value);
+		addNode(cur, lr ? cur->left : cur->right, value);
+		*/
+		if (!parent && head)
+		{
+			head->m.lock();
+		}
+
+		if (value < cur->value)
+		{
+			if (!cur->left)
+			{
+				cur->left = new Node(value);
+				cur->m.unlock();
+			}
+			else
+			{
+				cur->left->m.lock();
+				cur->m.unlock();
+				addNode(cur, cur->left, value);
+			}
+		}
+		else if (value > cur->value)
+		{
+			if (!cur->right)
+			{
+				cur->right = new Node(value);
+				cur->m.unlock();
+			}
+			else
+			{
+				cur->right->m.lock();
+				cur->m.unlock();
+				addNode(cur, cur->right, value);
+			}
+		}
+		else
+		{
+			cur->m.unlock();
+		}
 	}
 
 	//1/500 chance of missing one node
