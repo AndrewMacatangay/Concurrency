@@ -21,3 +21,5 @@
 	    Brainstorm idea for a project on everything learned so far
 6/18/2021 - Create parts of binary search tree class with concurrent operations
 	    Get familiar with optimization techniques
+6/25/2021 - Finish up concurrent BST program
+	    Start reading chapter 5
