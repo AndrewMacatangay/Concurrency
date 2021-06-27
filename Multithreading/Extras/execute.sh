@@ -1,4 +1,4 @@
 for x in {0..10000};
 	do
-		./a.out 10 10 1;
+		./a.out 100 1;
 	done
