@@ -6,7 +6,7 @@
 #include <future>
 using namespace std;
 
-int threadCount = 0;
+//int threadCount = 0;
 
 class Node
 {
@@ -28,7 +28,7 @@ void addNode(Node* parent, Node*& cur, int value)
 	else if (!cur)
 	{	
 		(parent->value > value ? parent->left : parent->right) = new Node(value);
-		this_thread::sleep_for(1ms);
+		//this_thread::sleep_for(1ms);
 		return;
 	}
 	else if (cur->value == value)
@@ -50,15 +50,15 @@ void inOrder(Node* cur)
 int main(int argc, char** argv)
 {
 	Node* head = nullptr;
-	vector<future<void>> futures;
-	int threadLimit = atoi(argv[1]);
+	//vector<future<void>> futures;
+	//int threadLimit = atoi(argv[1]);
 	
 	//Limit number of threads to N + 1, where N is the number of cores in CPU
 	for (int x = 0; x < 100000; x++)
 	{
-		//addNode(nullptr, head, rand() % 10000 + 1);
+		addNode(nullptr, head, rand() % 100000 + 1);
 		//async can start a new thread, or optimize and use current thread
-		if (threadCount < threadLimit)
+		/*if (threadCount < threadLimit)
 		{
 			futures.push_back(async(addNode, nullptr, ref(head), rand() % 100000 + 1));
 			threadCount++;
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 		{
 			futures.clear();
 			threadCount = 0;
-		}
+		}*/
 	}
 
 	//for(future<void>& f : futures)

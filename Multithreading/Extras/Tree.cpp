@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <future>
 using namespace std;
 
 class Tree
@@ -74,38 +75,54 @@ class Tree
 			bool lr = parent->value > value;
 			(lr ? parent->left : parent->right) = new Node(value);
 
-			//Creating a new node above will lock that new node and 
+			//Creating a new node above will have an unlocked mutex
+			//and unlocking the parent will end the hand-over-hand locking
 			parent->m.unlock();
+
+			//If we are storing the threads in containers, we might want
+			//to let the thread sleep to "offset" the costs of creating
+			//and utilizing the vector
 			//this_thread::sleep_for(1ms);
 			return;
 		}
+
+		//If we run into a duplicate number, then unlock the current
+		//lock to end the hand-over-hand locking
 		else if (cur->value == value)
 		{
 			cur->m.unlock();
 			return;
 		}
 		
+		//Determine which direction we want to visit next
 		bool lr = cur->value > value;
 
+		//If the direction we want to visit next is occupied,
+		//then lock that noce and unlock the current node
+		//(hand-over-hand locking)
 		if ((lr && cur->left) || (!lr && cur->right))
 		{
 			(lr ? cur->left : cur->right)->m.lock();
 			cur->m.unlock();
 		}
 
+		//Visit the next node
 		addNode(cur, lr ? cur->left : cur->right, value);
 	}
 
+	//Prints out the tree in-order of value (ascending)
 	void _inOrder(Node* cur)
 	{
 		if (!cur)
 			return;
 
 		_inOrder(cur->left);
-		_inOrder(cur->right);
 		cout << cur->value << " ";
+		_inOrder(cur->right);
 	}
-
+	
+	//Calls a recursive helper function to print out
+	//each value in order
 	void inOrder()
 	{
 		_inOrder(root);
