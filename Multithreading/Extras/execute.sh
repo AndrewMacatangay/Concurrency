@@ -1,4 +1,4 @@
-for x in {0..10000};
+for x in {0..1000};
 	do
-		./a.out 100 1;
+		./Tree 10 1;
 	done

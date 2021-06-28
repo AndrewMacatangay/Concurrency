@@ -28,7 +28,6 @@ void addNode(Node* parent, Node*& cur, int value)
 	else if (!cur)
 	{	
 		(parent->value > value ? parent->left : parent->right) = new Node(value);
-		//this_thread::sleep_for(1ms);
 		return;
 	}
 	else if (cur->value == value)
@@ -53,7 +52,6 @@ int main(int argc, char** argv)
 	//vector<future<void>> futures;
 	//int threadLimit = atoi(argv[1]);
 	
-	//Limit number of threads to N + 1, where N is the number of cores in CPU
 	for (int x = 0; x < 100000; x++)
 	{
 		addNode(nullptr, head, rand() % 100000 + 1);

@@ -92,8 +92,8 @@ class Tree
 
 int main()
 {
-	Tree tree(10);
-	tree.inOrder();
+	Tree tree(1000);
+//	tree.inOrder();
 
 	cout << endl;
 	cout << "Search result: " << tree.search(588) << endl;
