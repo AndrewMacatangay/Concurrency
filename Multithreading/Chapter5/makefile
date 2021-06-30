@@ -1,7 +1,7 @@
-all: AtomicBool
+all: AtomicFlag
 
-AtomicBool: AtomicBool.cpp
-	g++ -g -Wall AtomicBool.cpp -o AtomicBool -pthread
+AtomicFlag: AtomicFlag.cpp
+	g++ -g -Wall AtomicFlag.cpp -o AtomicFlag -pthread
 
 clean:
-	rm AtomicBool
+	rm AtomicFlag
