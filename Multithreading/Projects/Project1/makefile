@@ -10,4 +10,4 @@ TreeBuild: TreeBuild.cpp
 	g++ -g -Wall -o TreeBuild TreeBuild.cpp -pthread
 
 clean:
-	rm TreeSearch TreeBuild Tree
+	rm TreeSearch TreeBuild Tree output.txt

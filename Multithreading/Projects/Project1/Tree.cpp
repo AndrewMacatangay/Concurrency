@@ -16,6 +16,7 @@
 #include <thread>
 #include <mutex>
 #include <future>
+#include <atomic>
 using namespace std;
 
 class Tree
@@ -34,20 +35,19 @@ class Tree
 	Node* root;
 	mutex m;
 	once_flag initFlag;
+	atomic<int> processed;
 
 	public:
 	
 	//When a tree is constructed, a new thread will be launched to add a ndoe to the tree.
 	//This can create bottlenecks since the number of threads concurrently running is
 	//not bounded. I can fix this in the future.
-	Tree(int numNodes) : root(nullptr)
+	Tree(int numNodes) : root(nullptr), processed(0)
 	{
 		//Uncomment this to have truly random values. Comment it for testing purposes
 		//srand(time(NULL));
-
-		//Blocking occurs here
 		for (int x = 0; x < numNodes; x++)
-			async(launch::async, &Tree::addNode, this, nullptr, ref(root), rand() % numNodes + 1);
+			thread(&Tree:: addNode, this, nullptr, ref(root), rand() % numNodes + 1).detach();
 	}
 
 	//Clear every node in the tree
@@ -104,6 +104,8 @@ class Tree
 		else if (cur->value == value)
 		{
 			cur->m.unlock();
+			if (!parent)
+				processed++;
 			return;
 		}
 		
@@ -113,25 +115,16 @@ class Tree
 		//If the direction we want to visit next is occupied,
 		//then lock that noce and unlock the current node
 		//(hand-over-hand locking)
-		/*if ((lr && cur->left) || (!lr && cur->right))
+		if ((lr && cur->left) || (!lr && cur->right))
 		{
 			(lr ? cur->left : cur->right)->m.lock();
-			cur->m.unlock();
-		}*/
-
-		if (lr && cur->left)
-		{
-			cur->left->m.lock();
-			cur->m.unlock();
-		}
-		else if (!lr && cur->right)
-		{
-			cur->right->m.lock();
 			cur->m.unlock();
 		}
 
 		//Visit the next node
 		addNode(cur, lr ? cur->left : cur->right, value);
+		if (!parent)
+			processed++;
 	}
 
 	//Prints out the tree in-order of value (ascending)
@@ -189,12 +182,22 @@ class Tree
 	{
 		return _search(root, value);
 	}
+
+	//Returns the number of values that have been processed for the tree
+	int getProcessed()
+	{
+		return processed;
+	}
 };
 
 int main(int argc, char** argv)
 {
 	//Number of threads the number of nodes
-	Tree tree(stoi(argv[1]));
+	int size = stoi(argv[1]);
+	Tree tree(size);
+
+	//Wait for all threads to get processed before proceeding
+	while(tree.getProcessed() != size);
 
 	if (argc > 2 && stoi(argv[2]))
 	{
