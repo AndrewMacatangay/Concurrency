@@ -1,4 +1,4 @@
-all: AtomicFlag AtomicBool
+all: AtomicFlag AtomicBool Relaxed
 
 AtomicFlag: AtomicFlag.cpp
 	g++ -g -Wall AtomicFlag.cpp -o AtomicFlag -pthread
@@ -6,5 +6,8 @@ AtomicFlag: AtomicFlag.cpp
 AtomicBool: AtomicBool.cpp
 	g++ -g -Wall AtomicBool.cpp -o AtomicBool -pthread
 
+Relaxed: Relaxed.cpp
+	g++ -g -Wall Relaxed.cpp -o Relaxed -pthread
+
 clean:
-	rm AtomicFlag AtomicBool
+	rm AtomicFlag AtomicBool Relaxed
