@@ -3,32 +3,37 @@
 #include <atomic>
 using namespace std;
 
-atomic<int> x, y;
-int r1, r2;
+atomic<bool> monitor;
+bool available;
 
-void func1()
+void makeBurger()
 {
-	r1 = y.load(memory_order_relaxed);
-	x.store(r1, memory_order_relaxed);
+	available = true;
+	cout << "Burger made!" << endl;
+	monitor.store(available, memory_order_release);
 }
 
-void func2()
+void sellBurger()
 {
-	r2 = x.load(memory_order_relaxed);
-	y.store(42, memory_order_relaxed);
+	while(!monitor.load(memory_order_acquire));
+
+	available = false;
+	cout << "Burger sold!" << endl;
+	monitor.store(available, memory_order_release);
 }
 
 int main()
 {
-	x = y = 0;
+	monitor = false;
+	available = false;
 
-	thread t1(func1);
-	thread t2(func2);
+	thread t1(makeBurger);
+	thread t2(sellBurger);
 
 	t1.join();
 	t2.join();
 
-	cout << "R1: " << r1 << " R2: " << r2 << " x: " << x << " y: " << y << endl;
-
+	cout << (monitor.is_lock_free() ? "Lock-free!" : "Not lock-free...") << endl;
+	
 	return 0;
 }
