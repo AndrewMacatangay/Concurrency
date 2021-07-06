@@ -26,3 +26,4 @@
 7/1/2021  - Continue reading on memory models and make simple examples
 7/5/2021  - Make diagram for AcquireRelease.cpp
 	    Go back to section 5.2.3 and implement a compare_exchange example
+7/6/2021  - Start and finish AtomicBool.cpp and start reading section 5.2.4
