@@ -1,4 +1,4 @@
-all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer
+all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT
 
 AtomicFlag: AtomicFlag.cpp
 	g++ -g -Wall AtomicFlag.cpp -o AtomicFlag -pthread
@@ -15,8 +15,11 @@ AcquireRelease: AcquireRelease.cpp
 CompareExchange: CompareExchange.cpp
 	g++ -g -Wall CompareExchange.cpp -o CompareExchange -pthread
 
-AtomicPointer:
-	g++ -g -Wall AtomicPointer.cpp -o AtomicPointer -pthread
+AtomicPointer: AtomicPointer.cpp
+	g++ -g -Wall AtomicPointer.cpp -o AtomicPointer
+
+AtomicUDT: AtomicUDT.cpp
+	g++ -g -Wall AtomicUDT.cpp -o AtomicUDT -latomic
 
 clean:
-	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer
+	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT
