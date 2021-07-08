@@ -3,6 +3,14 @@ This program is intended to demonstrate pointer arithmetic and atomic operations
 Note that fetch instructions will return the original value after performing
 the operation, and the compound assignment, increment, and decrement operators
 will return the result after performing the operation.
+
+Sidenote:
+Atomic multiplication and division is not allowed.
+
+atomic<int> x(0);
+x *= 2;		//No atomic multiplication
+x = x + 1;	//Atomic read followed by atomic write
+x = x * 2;	//Atomic read followed by atomic write
 */
 
 #include <iostream>
