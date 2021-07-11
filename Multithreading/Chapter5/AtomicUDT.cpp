@@ -1,3 +1,10 @@
+/*
+Atomic user-defined types are more likely than not, trivially copy-assignable.
+This allows the compiler to use memcpy() on an object. This is necessary for the
+object to be compare-exchanged. Keep in mind that an atomic struct is different 
+than a struct with atomics inside of it.
+*/
+
 #include <iostream>
 #include <type_traits>
 #include <atomic>
@@ -6,42 +13,16 @@ using namespace std;
 struct Node
 {
 	int value;
-	atomic<Node*> next;
-	Node(int v = -1, Node* n = nullptr) : value(v), next(n) { }
+	Node(int v = -1) : value(v) { }
 };
-
-atomic<Node*> head(nullptr);
-atomic<Node*> tail(nullptr);
-
-void push_back(int value)
-{
-	if (!head)
-	{
-		head = tail = new Node(value);
-		return;
-	}
-	atomic<Node*> newNode(new Node(value));	
-	tail.load()->next = newNode.load();
-	tail = newNode.load();
-
-}
-
-void print()
-{
-	for(Node* cur = head; cur; cur = cur->next)
-		cout << cur->value << " ";
-	cout << endl;
-}
 
 int main()
 {
-	cout << "Node: " << is_trivially_copyable<Node>::value << endl;
-	cout << "Node to Node: " << is_trivially_copy_assignable<Node>::value << endl;
+	cout << "Trivially copy assignable: " << is_trivially_copy_assignable<Node>::value << endl;
 
-	for(int x = 0; x < 5; x++)
-		push_back(x);
+	atomic<Node> n(4);
+	cout << "Node value: " << n.load().value << endl;
 
-	print();
-
+	cout << (n.is_lock_free() ? "Lock-Free!" : "Not Lock-Free...") << endl;
 	return 0;
 }
