@@ -27,3 +27,5 @@
 7/5/2021  - Make diagram for AcquireRelease.cpp
 	    Go back to section 5.2.3 and implement a compare_exchange example
 7/6/2021  - Start and finish AtomicBool.cpp and start reading section 5.2.4
+7/11/2021 - Read section 5.3
+	    Create new .cpp files if necessary. If not, make changes according to the reading
