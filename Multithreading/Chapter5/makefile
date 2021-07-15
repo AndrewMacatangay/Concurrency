@@ -1,4 +1,4 @@
-all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent
+all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2
 
 AtomicFlag: AtomicFlag.cpp
 	g++ -g -Wall AtomicFlag.cpp -o AtomicFlag -pthread
@@ -27,5 +27,8 @@ FreeFunction: FreeFunction.cpp
 SequentiallyConsistent: SequentiallyConsistent.cpp
 	g++ -g -Wall SequentiallyConsistent.cpp -o SequentiallyConsistent -pthread
 
+Relaxed2: Relaxed2.cpp
+	g++ -g -Wall Relaxed2.cpp -o Relaxed2 -pthread
+
 clean:
-	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent
+	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2
