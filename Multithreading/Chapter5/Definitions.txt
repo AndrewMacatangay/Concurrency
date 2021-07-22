@@ -1,0 +1,3 @@
+Sequentially consistent - Every thread is updated about the change made to memory (expensive)
+Relaxed - Read/Writes to memory can happen in any order (cheap)
+Acquire/Release - All writes must happen before the release barrier and after the acquire barrier (Some overhead)
