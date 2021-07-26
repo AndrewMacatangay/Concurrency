@@ -1,3 +1,4 @@
+7/26/2021 - Finish reading the rest of the chapter
 7/15/2021 - Read about acquire-release and make second example if necessary
 7/13/2021 - Continue reading about memory ordering
 	    Create new .cpp files if necessary. If not, make changes according to the reading
