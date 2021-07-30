@@ -15,21 +15,20 @@ void produce(int stock)
 
 void consume(int stock, int threadNumber)
 {
-	int index = 0;
-	while((index = counter.fetch_sub(1, memory_order_acquire)) <= 0)
-	{
-		if (index < 0)
-			return;
-		//cout << stock << " " << threadNumber << " " << index << endl;
-	};
+	if (threadNumber > stock)
+		return;
+
+	int index;
+
+	while((index = counter.fetch_sub(1, memory_order_acquire)) <= 0);
 	v[stock - index] = threadNumber;
 }
 
 int main()
 {
 	vector<thread> consumers;
-	int supply = 5;
-	int demand = 6;
+	int supply = 6;
+	int demand = 5;
 
 	thread t1(produce, supply);
 	
