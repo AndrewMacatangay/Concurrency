@@ -1,4 +1,4 @@
-all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2 AcquireRelease2 ReleaseSequence
+all: AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2 AcquireRelease2 ReleaseSequence Fence
 
 AtomicFlag: AtomicFlag.cpp
 	g++ -g -Wall AtomicFlag.cpp -o AtomicFlag -pthread
@@ -36,5 +36,8 @@ AcquireRelease2: AcquireRelease2.cpp
 ReleaseSequence: ReleaseSequence.cpp
 	g++ -g -Wall ReleaseSequence.cpp -o ReleaseSequence -pthread
 
+Fence: Fence.cpp
+	g++ -g -Wall Fence.cpp -o Fence -pthread
+
 clean:
-	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2 AcquireRelease2 ReleaseSequence
+	rm AtomicFlag AtomicBool Relaxed AcquireRelease CompareExchange AtomicPointer AtomicUDT FreeFunction SequentiallyConsistent Relaxed2 AcquireRelease2 ReleaseSequence Fence
