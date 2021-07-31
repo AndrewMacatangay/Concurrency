@@ -67,7 +67,7 @@ int main()
 	}*/
 
 	read(socket, buf, 4096);
-	printf("%s", buf);
+	printf("%s\n", buf);
 	send(socket, "Hello from Server", 18, 0);
 	printf("Hello sent from Server\n");
 

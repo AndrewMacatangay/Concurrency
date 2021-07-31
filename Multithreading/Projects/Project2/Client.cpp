@@ -29,7 +29,8 @@ int main()
 
 	char buffer[4096];
 	char msg[2] = {'a', '\n'};
-	send(clientSocket, msg, 3, 0);
+	send(clientSocket, "Hello from Client", 18, 0);
+	cout << "Hello sent from Client" << endl;
 	read(clientSocket, buffer, 4096);
 	printf("%s\n", buffer);
 	return 0;
