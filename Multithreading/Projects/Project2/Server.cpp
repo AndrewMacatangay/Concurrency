@@ -1,22 +1,20 @@
 #include <iostream>
-#include <netinet/in.h> //https://pubs.opengroup.org/onlinepubs/009695399/basedefs/netinet/in.h.html
-#include <sys/socket.h> //https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include <unistd.h>
 using namespace std;
 
 int main()
 {
-	//Create a socket
-	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-	if (serverSocket < 0)
+	int serverSocket;
+	if (!(serverSocket = socket(AF_INET, SOCK_STREAM, 0)))
 	{
 		cout << "Failed!" << endl;
 		return 1;
 	}
 
-	int reuseTrue = 1;
-	int retVal = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &reuseTrue, sizeof(reuseTrue));
-	if (retVal < 0)
+	int opt = 1;
+	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
 	{
 		cout << "Failed!" << endl;
 		return 1;
@@ -27,19 +25,21 @@ int main()
 	addr.sin_port = htons(8080);
 	addr.sin_addr.s_addr = INADDR_ANY;
 
-	bind(serverSocket, (struct sockaddr*) &addr, sizeof(addr));
-
-	retVal = listen(serverSocket, 10);
-	if (retVal < 0)
+	if (bind(serverSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0)
 	{
 		cout << "Failed!" << endl;
 		return 1;
 	}
 
-//	struct sockaddr_in remote_Addr;
+	if (listen(serverSocket,10) < 0)
+	{
+		cout << "Failed!" << endl;
+		return 1;
+	}
+
 	int sockLen = sizeof(addr);
-	int socket = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*)&sockLen);
-	if (socket < 0)
+	int socket;
+	if ((socket = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 	{
 		cout << "Failed!" << endl;
 		return 1;
