@@ -13,7 +13,7 @@ int main()
 		cout << "Failed!" << endl;
 		return 1;
 	}
-	
+									
 	int reuseTrue = 1;
 	int retVal = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &reuseTrue, sizeof(reuseTrue));
 	if (retVal < 0)
@@ -26,7 +26,7 @@ int main()
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(8080);
 	addr.sin_addr.s_addr = INADDR_ANY;
-	
+
 	bind(serverSocket, (struct sockaddr*) &addr, sizeof(addr));
 
 	retVal = listen(serverSocket, 10);
@@ -59,7 +59,6 @@ int main()
 	printf("%s\n", buf);
 	send(socket, "Hello from Server", 18, 0);
 	printf("Hello sent from Server\n");
-
 	close(serverSocket);
 
 	return 0;
