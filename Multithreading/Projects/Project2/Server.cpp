@@ -13,7 +13,7 @@ int main()
 		cout << "Failed!" << endl;
 		return 1;
 	}
-									
+
 	int reuseTrue = 1;
 	int retVal = setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &reuseTrue, sizeof(reuseTrue));
 	if (retVal < 0)
