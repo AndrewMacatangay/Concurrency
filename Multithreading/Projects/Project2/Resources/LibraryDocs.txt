@@ -1,0 +1,4 @@
+arpa/inet.h:		https://pubs.opengroup.org/onlinepubs/7908799/xns/arpainet.h.html
+netinet/in.h:		https://pubs.opengroup.org/onlinepubs/009695399/basedefs/netinet/in.h.html
+sys/socket.h:		https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html
+unistd.h:		https://pubs.opengroup.org/onlinepubs/7908799/xsh/unistd.h.html
