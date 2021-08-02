@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -27,18 +28,14 @@ int main()
 	if ((connection = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 	{ cerr << "Failed!" << endl; return 1; }
 
-	/*while(1)
+	while (buffer[0] != 'a')
 	{
-		//int received = recv(socket, buf, 4096, 0);
-		int received = read(socket, buf, 4096);
-		send(socket, buf, received + 1, 0);
-		cout << "Looped!" << endl;
-	}*/
-
-	read(connection, buffer, 4096);
-	cout << buffer << endl;
-	send(connection, "Hello from Server", 18, 0);
-	cout << "Hello sent from Server" << endl;
+		//Once you're done using the information from the buffer, clear it
+		memset(buffer, 0, 4096);
+		int bytesReceived = read(connection, buffer, 4096);
+		cout << "Client: " << buffer << endl;
+		send(connection, buffer, bytesReceived + 1, 0);
+	}
 
 	close(serverSocket);
 

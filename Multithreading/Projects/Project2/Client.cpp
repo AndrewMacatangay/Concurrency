@@ -1,7 +1,8 @@
+#include <arpa/inet.h>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <arpa/inet.h>
 using namespace std;
 
 int main()
@@ -12,12 +13,19 @@ int main()
 	struct sockaddr_in addr = {AF_INET, htons(8080)};
 	inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-	connect(clientSocket, (struct sockaddr*) &addr, sizeof(addr));
+	if(connect(clientSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0)
+	{ cerr << "Failed!" << endl; return 1; }
 
-	send(clientSocket, "Hello from Client", 18, 0);
-	cout << "Hello sent from Client" << endl;
-	read(clientSocket, buffer, 4096);
-	cout << buffer << endl;
-	
+	while (buffer[0] != 'a')
+	{
+		cout << "Enter a message: ";
+		cin.getline(buffer, 4096);
+
+		send(clientSocket, buffer, strlen(buffer), 0);
+
+		read(clientSocket, buffer, 4096);
+		cout << "Server: " << buffer << endl;
+	}
+
 	return 0;
 }
