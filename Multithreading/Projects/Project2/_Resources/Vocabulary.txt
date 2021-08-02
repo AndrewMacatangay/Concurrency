@@ -1,0 +1,1 @@
+File Descriptor: A non-negative number that the kernel can use as a reference to an open file. They act as mailboxes that you can put mail in (write) and take mail from (read). File descriptors 0, 1, and 2 are reserved.
