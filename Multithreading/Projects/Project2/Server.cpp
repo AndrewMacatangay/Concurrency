@@ -22,7 +22,7 @@ int main()
 	if (bind(serverSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0)
 	{ cerr << "Failed!" << endl; return 1; }
 
-	if (listen(serverSocket,10) < 0)
+	if (listen(serverSocket, 10) < 0)
 	{ cerr << "Failed!" << endl; return 1; }
 
 	if ((connection = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
