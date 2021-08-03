@@ -1,3 +1,4 @@
+8/3/2021  - Create class for client/thread for RAII
 8/2/2021  - Create support for multiple clients and plan out multithreaded commands
 7/31/2021 - Start coding for client/server project
 7/28/2021 - Plan client/server code
