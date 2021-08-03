@@ -1,7 +1,7 @@
 all: Client Server
 
 Server: Server.cpp
-	g++ -g -Wall Server.cpp -o Server
+	g++ -g -Wall Server.cpp -o Server -pthread
 
 runServer: Server
 	./Server
