@@ -6,26 +6,31 @@
 #include <unistd.h>
 using namespace std;
 
+//Mutex needed for race conditions on cout
+
 void echo(int connection)
 {
-	char buffer[4096];
-	while (buffer[0] != 'a')
+	for (char buffer[4096] = {1}; 1; )
 	{
 		//Once you're done using the information from the buffer, clear it
 		memset(buffer, 0, 4096);
 		int bytesReceived = read(connection, buffer, 4096);
-		cout << "Client: " << buffer << endl;
+		if (buffer[0])
+			cout << "Client " << connection - 3 << ": " << buffer << endl;
+		else
+			{ cout << "Client " << connection - 3 << " disconnected!" << endl; return; }
 		send(connection, buffer, bytesReceived + 1, 0);
 	}
 }
 
 void acceptConnections(int serverSocket, sockaddr_in& addr, int& sockLen)
 {
+	//Connection number should be atomic
 	for (int connection; 1; )
 	{
 		if ((connection = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 			{ cerr << "Connection failed!\n"; return; }
-		cout << "Connection: " << connection << endl;
+		cout << "Client " << connection - 3 << " connected!" << endl;
 		thread(echo, connection).detach();
 	}
 }
