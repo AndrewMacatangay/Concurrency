@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <arpa/inet.h>
 #include <cstring>
 #include <iostream>
+#include <locale>
 #include <string>
 #include <unistd.h>
 using namespace std;
@@ -19,8 +21,9 @@ int main()
 	{
 		cout << "Enter a message: ";
 		cin.getline(buffer, 4096);
+		string b2s(buffer);
 
-		if (!strlen(buffer))
+		if (b2s.find(27) != b2s.npos || all_of(b2s.begin(), b2s.end(), [](char c){ return isspace(c); }))
 			continue;
 
 		send(clientSocket, buffer, strlen(buffer), 0);
