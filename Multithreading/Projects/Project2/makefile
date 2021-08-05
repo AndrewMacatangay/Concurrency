@@ -12,5 +12,8 @@ Client: Client.cpp
 runClient: Client
 	./Client
 
+Scrape: Scrape.cpp
+	g++ -g -Wall Scrape.cpp -o Scrape -lcurl
+
 clean:
-	rm Server Client
+	rm Server Client Scrape
