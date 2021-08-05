@@ -1,3 +1,5 @@
+8/5/2021  - Account for ticker symbols that do not exist
+	    Move code from the scraper to the server
 8/3/2021  - Create class for client/thread for RAII
             Fix potential bugs on input and find a way to scrape data
 8/2/2021  - Create support for multiple clients and plan out multithreaded commands
