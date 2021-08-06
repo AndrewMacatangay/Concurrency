@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cstring>
+#include <curl/curl.h>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -8,18 +10,57 @@ using namespace std;
 
 //Mutex needed for race conditions on cout
 
+int curlWriter(char* data, int size, int nmemb, string* buffer)
+{
+	if (buffer)
+		buffer->append(data, size * nmemb);
+
+	return buffer ? size * nmemb : 0;
+}
+
+string parsePrice(string ticker)
+{
+	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+	//Might be an issue with adding commas to the ticker
+
+	CURL* curl = curl_easy_init();
+	string URL = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-US&region=US&corsDomain=finance.yahoo.com&symbols=" + ticker;
+	string curlBuffer;
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriter);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &curlBuffer);
+	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+	curl_easy_perform(curl);
+
+	size_t priceIndex = curlBuffer.find("regularMarketPrice");
+	if (priceIndex == curlBuffer.npos)
+	{
+		//cout << "Ticker symbol not found!" << endl;
+		return "Ticker symbol not found!";
+	}
+
+	string temp = curlBuffer.substr(priceIndex + 20);
+	return ticker + ": " + temp.substr(0, temp.find(','));
+}
+
 void echo(int connection)
 {
+	string response;
 	for (char buffer[4096] = {1}; 1; )
 	{
 		//Once you're done using the information from the buffer, clear it
 		memset(buffer, 0, 4096);
-		int bytesReceived = read(connection, buffer, 4096);
+		read(connection, buffer, 4096);
 		if (buffer[0])
+		{
+			//Client number needs to be fixed!!!
 			cout << "Client " << connection - 3 << ": " << buffer << endl;
+			strncpy(buffer, parsePrice(buffer).c_str(), 4096);
+		}
 		else
 			{ cout << "Client " << connection - 3 << " disconnected!" << endl; return; }
-		send(connection, buffer, bytesReceived + 1, 0);
+		send(connection, buffer, strlen(buffer), 0);
 	}
 }
 
