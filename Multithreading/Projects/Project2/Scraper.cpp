@@ -14,8 +14,14 @@ int curlWriter(char* data, int size, int nmemb, string* buffer)
 	return buffer ? size * nmemb : 0;
 }
 
-void parsePrice(string ticker)
+void parsePrice()
 {
+	string ticker;
+	cout << "Input ticker symbol: ";
+	cin >> ticker;
+	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+	//Might be an issue with adding commas to the ticker
+
 	CURL* curl = curl_easy_init();
 	string URL = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-US&region=US&corsDomain=finance.yahoo.com&symbols=" + ticker;
 	
@@ -27,7 +33,14 @@ void parsePrice(string ticker)
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		curl_easy_perform(curl);
 
-		int priceIndex = curlBuffer.find("regularMarketPrice");
+		size_t priceIndex = curlBuffer.find("regularMarketPrice");
+
+		if (priceIndex == curlBuffer.npos)
+		{
+			cout << "Ticker symbol not found!" << endl;
+			return parsePrice();
+		}
+
 		string temp = curlBuffer.substr(priceIndex + 20);
 		cout << ticker << ": " << temp.substr(0, temp.find(',')) << endl;
 	
@@ -37,12 +50,7 @@ void parsePrice(string ticker)
 
 int main()
 {
-	string ticker;
-	cout << "Input ticker symbol: ";
-	cin >> ticker;
-	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
-
-	parsePrice(ticker);
+	parsePrice();
 	
 	return 0;
 }
