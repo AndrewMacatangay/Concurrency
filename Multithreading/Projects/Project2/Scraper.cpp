@@ -8,10 +8,7 @@ using namespace std;
 
 int curlWriter(char* data, int size, int nmemb, string* buffer)
 {
-	if (buffer)
-		buffer->append(data, size * nmemb);
-
-	return buffer ? size * nmemb : 0;
+	return buffer && &(buffer->append(data, size * nmemb)) ? size * nmemb : 0;
 }
 
 void parsePrice()
@@ -44,7 +41,7 @@ void parsePrice()
 		string temp = curlBuffer.substr(priceIndex + 20);
 		cout << ticker << ": " << temp.substr(0, temp.find(',')) << endl;
 	
-		this_thread::sleep_for(1s);
+		this_thread::sleep_for(2s);
 	}
 }
 

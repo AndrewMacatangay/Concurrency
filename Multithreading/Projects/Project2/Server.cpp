@@ -12,10 +12,7 @@ using namespace std;
 
 int curlWriter(char* data, int size, int nmemb, string* buffer)
 {
-	if (buffer)
-		buffer->append(data, size * nmemb);
-
-	return buffer ? size * nmemb : 0;
+	return buffer && &(buffer->append(data, size * nmemb)) ? size * nmemb : 0;
 }
 
 string parsePrice(string ticker)
@@ -41,10 +38,12 @@ string parsePrice(string ticker)
 	}
 
 	string temp = curlBuffer.substr(priceIndex + 20);
-	return ticker + ": " + temp.substr(0, temp.find(','));
+	temp = temp.substr(0, temp.find(','));
+	temp[temp.size() - 2] == '.' && &(temp += '0');
+	return ticker + ": " + temp;
 }
 
-void echo(int connection)
+void echo(int connection, int connectionNumber)
 {
 	string response;
 	for (char buffer[4096] = {1}; 1; )
@@ -54,25 +53,25 @@ void echo(int connection)
 		read(connection, buffer, 4096);
 		if (buffer[0])
 		{
-			//Client number needs to be fixed!!!
-			cout << "Client " << connection - 3 << ": " << buffer << endl;
 			strncpy(buffer, parsePrice(buffer).c_str(), 4096);
+			if ((string)buffer != "Ticker symbol not found!")
+				cout << "Client " << connectionNumber << ": " << buffer << endl;
 		}
 		else
-			{ cout << "Client " << connection - 3 << " disconnected!" << endl; return; }
+			{ cout << "Client " << connectionNumber << " disconnected!" << endl; return; }
 		send(connection, buffer, strlen(buffer), 0);
 	}
 }
 
 void acceptConnections(int serverSocket, sockaddr_in& addr, int& sockLen)
 {
-	//Connection number should be atomic
-	for (int connection; 1; )
+	//Connection number should be atomic?
+	for (int connection, connectionNumber = 1; 1; connectionNumber++)
 	{
 		if ((connection = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 			{ cerr << "Connection failed!\n"; return; }
-		cout << "Client " << connection - 3 << " connected!" << endl;
-		thread(echo, connection).detach();
+		cout << "Client " << connectionNumber << " connected!" << endl;
+		thread(echo, connection, connectionNumber).detach();
 	}
 }
 
