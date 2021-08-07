@@ -28,7 +28,8 @@ string parsePrice(string ticker)
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &curlBuffer);
 	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-	curl_easy_perform(curl);
+	if (curl_easy_perform(curl))
+		return "Error loading ticker symbol!";
 
 	size_t priceIndex = curlBuffer.find("regularMarketPrice");
 	if (priceIndex == curlBuffer.npos)
