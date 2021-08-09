@@ -7,6 +7,7 @@
 #include <thread>
 #include <unistd.h>
 using namespace std;
+#include "Data.h"
 
 //Mutex needed for race conditions on cout
 
@@ -31,17 +32,9 @@ string parsePrice(string ticker)
 	if (curl_easy_perform(curl))
 		return "Error loading ticker symbol!";
 
-	size_t priceIndex = curlBuffer.find("regularMarketPrice");
-	if (priceIndex == curlBuffer.npos)
-	{
-		//cout << "Ticker symbol not found!" << endl;
-		return "Ticker symbol not found!";
-	}
+	Data stockData(ticker, curlBuffer);
 
-	string temp = curlBuffer.substr(priceIndex + 20);
-	temp = temp.substr(0, temp.find(','));
-	temp[temp.size() - 2] == '.' && &(temp += '0');
-	return ticker + ": " + temp;
+	return stockData.getPrice();
 }
 
 void echo(int connection, int connectionNumber)

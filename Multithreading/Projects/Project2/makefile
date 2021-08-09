@@ -1,6 +1,6 @@
 all: Client Server
 
-Server: Server.cpp
+Server: Server.cpp Data.h
 	g++ -g -Wall Server.cpp -o Server -pthread -lcurl
 
 runServer: Server
