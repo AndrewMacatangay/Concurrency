@@ -1,10 +1,10 @@
 Basic Info:
-longName fullExchangeName
-regularMarketPrice regularMarketChange
+longName fullExchangeName regularMarketPrice
 marketCap
 circulatingSupply (crypto)
 
 Today:
+regularMarketChange regularMarketChangePercent
 regularMarketLow regularMarketHigh
 bid ask
 

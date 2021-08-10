@@ -1,3 +1,4 @@
+//The Data class is dedicated to receive and process a JSON string
 class Data
 {
 	private:
@@ -5,15 +6,22 @@ class Data
 	bool isValidTicker, isCrypto;
 	size_t attributeIndex;
 
+	//General purpose function used to parse data from a given attribute
 	string getAttribute(string attribute)
 	{
+		//Find the index where the attribute begins. If the
+		//attribute does not exist, return an error message
 		attributeIndex = JSON.find(attribute);
 		if (attributeIndex == JSON.npos)
-			return "Ticker symbol not found!";
+			return "Error: Attribute Does Not Exist";
 		
+		//We want to slice the string from the beginning of the data
+		//to the end of the JSON string for now
 		buffer = JSON.substr(attributeIndex + attribute.size() + 2);
 
-		//At this point we have either a string or a double that we need to reformat
+		//At this point we have either a string or a double that we need to reformat.
+		//We have to slice the string such that the remaining attributes from the JSON
+		//string that are not needed are pruned
 		if(buffer[0] == '"')
 		{
 			buffer = buffer.substr(1);
@@ -29,37 +37,45 @@ class Data
 
 	}
 
-	//Let's add a loop for these
-	//Market cap doesnt have a decimal and has more than 1 comma
-	string formatNumber(string fund)
+	string formatNumber(string number)
 	{
-		bool negative = fund[0] == '-';
-		negative && &(fund = fund.substr(1));
+		//If the number is negative, we should remove the sign and 
+		//insert it after adding the commas. 
+		bool negative = number[0] == '-';
+		negative && &(number = number.substr(1));
 
-		size_t decimalIndex = fund.find('.');
-		decimalIndex == string::npos && (decimalIndex = fund.size());
+		//Find the index of the decimal or the end of the number to
+		//find the index where we start making commas from
+		size_t decimalIndex = number.find('.');
+		decimalIndex == string::npos && (decimalIndex = number.size());
 
+		//For every 3 digits, add a comma
 		for ( ; decimalIndex > 3; decimalIndex -= 3)
-			fund.insert(decimalIndex - 3, ",");
+			number.insert(decimalIndex - 3, ",");
 
-		negative && &fund.insert(0, "-");
-		return fund;
+		//If the number was negative, then insert the negative sign back 
+		negative && &number.insert(0, "-");
+		return number;
 	}
 
 	public:
 
-	//Any other error checking for valid tickers must be included here
+	//Data constructor:
+	//Any other error checking for valid tickers must be included here. Checks
+	//will be done at the beginning of each member function to check if the
+	//ticker symbol is valid to avoid extra computation
 	Data(string ticker, string curlBuffer) : ticker(ticker), JSON(curlBuffer)
 	{
 		isValidTicker = JSON.find("\"result\":[]") == string::npos &&
 				JSON.find("regularMarketPrice") != string::npos;
 		isCrypto = JSON.find("CRYPTOCURRENCY") != string::npos;
 	}
-	
+
+	//Executed when only the ticker symbol is given
 	string getBasicInformation()
 	{
 		if (!isValidTicker)
-			return "Ticker symbol not found!";
+			return "Error: Invalid Ticker Symbol";
 
 		string padding(ticker.size() + 2, ' ');
 
@@ -68,6 +84,7 @@ class Data
 		
 		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
 		string marketChange = formatNumber(getAttribute("regularMarketChange"));
+		marketChange.insert(marketChange[0] == '-' ? 1 : 0, "$");
 
 		string marketCap = formatNumber(getAttribute("marketCap"));
 		string coinSupply;
@@ -78,8 +95,7 @@ class Data
 
 		string bid = formatNumber(getAttribute("bid"));
 		string ask = formatNumber(getAttribute("ask"));
-		return ticker + ": " + name + " (" + exchangeName + ")\n"
-			      + padding + "$" + marketPrice + " (" + marketChange + "%)" + "\n"
+		return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
 			      + padding + "Market Cap: $" + marketCap
 			      + (isCrypto ? + "\n" + padding + "Circulating Supply: " + coinSupply : "");
 //			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
