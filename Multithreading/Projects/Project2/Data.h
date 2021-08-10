@@ -65,6 +65,8 @@ class Data
 		       marketChange.insert((marketChange[0] == '-' ? 1 : 0), "$");
 
 		string marketCap = formatNumber(getAttribute("marketCap"));
+		string coinSupply;
+		isCrypto && &(coinSupply = formatNumber(getAttribute("circulatingSupply")));
 
 		string marketLow = formatNumber(getAttribute("regularMarketDayLow"));
 		string marketHigh = formatNumber(getAttribute("regularMarketDayHigh"));
