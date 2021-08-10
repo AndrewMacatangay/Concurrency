@@ -16,7 +16,7 @@ int curlWriter(char* data, int size, int nmemb, string* buffer)
 	return buffer && &(buffer->append(data, size * nmemb)) ? size * nmemb : 0;
 }
 
-string parsePrice(string ticker)
+string fetchData(string ticker)
 {
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 	//Might be an issue with adding commas to the ticker
@@ -33,11 +33,10 @@ string parsePrice(string ticker)
 		return "Error loading ticker symbol!";
 
 	Data stockData(ticker, curlBuffer);
-
-	return stockData.getPrice();
+	return stockData.getBasicInformation();
 }
 
-void echo(int connection, int connectionNumber)
+void communicate(int connection, int connectionNumber)
 {
 	string response;
 	for (char buffer[4096] = {1}; 1; )
@@ -45,14 +44,15 @@ void echo(int connection, int connectionNumber)
 		//Once you're done using the information from the buffer, clear it
 		memset(buffer, 0, 4096);
 		read(connection, buffer, 4096);
+		string query = buffer;
 		if (buffer[0])
 		{
-			strncpy(buffer, parsePrice(buffer).c_str(), 4096);
-			if ((string)buffer != "Ticker symbol not found!")
-				cout << "Client " << connectionNumber << ": " << buffer << endl;
+			strncpy(buffer, fetchData(buffer).c_str(), 4096);
+			if (string(buffer).find("Ticker symbol not found!") == string::npos)
+				cout << "Client " << connectionNumber << ": " << query << "\n" << buffer << "\n\n";
 		}
 		else
-			{ cout << "Client " << connectionNumber << " disconnected!" << endl; return; }
+			{ cout << "Client " << connectionNumber << " disconnected!" << "\n\n"; return; }
 		send(connection, buffer, strlen(buffer), 0);
 	}
 }
@@ -64,8 +64,8 @@ void acceptConnections(int serverSocket, sockaddr_in& addr, int& sockLen)
 	{
 		if ((connection = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 			{ cerr << "Connection failed!\n"; return; }
-		cout << "Client " << connectionNumber << " connected!" << endl;
-		thread(echo, connection, connectionNumber).detach();
+		cout << "Client " << connectionNumber << " connected!\n\n";
+		thread(communicate, connection, connectionNumber).detach();
 	}
 }
 

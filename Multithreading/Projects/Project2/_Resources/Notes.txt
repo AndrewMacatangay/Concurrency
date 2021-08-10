@@ -1,0 +1,14 @@
+Basic Info:
+longName
+fullExchangeName
+
+regularMarketHigh
+regularMarketPrice
+regularMarketLow
+regularMarketChange
+bid
+ask
+
+Other quotetypes besides equity, ETF, mutualfund, and crypto?
+  Deal with each one differently?
+Class should handle if ticker is valid or not
