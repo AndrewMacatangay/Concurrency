@@ -1,14 +1,12 @@
 Basic Info:
-longName
-fullExchangeName
+longName fullExchangeName
+regularMarketPrice regularMarketChange
+marketCap
+circulatingSupply (crypto)
 
-regularMarketHigh
-regularMarketPrice
-regularMarketLow
-regularMarketChange
-bid
-ask
+Today:
+regularMarketLow regularMarketHigh
+bid ask
 
-Other quotetypes besides equity, ETF, mutualfund, and crypto?
-  Deal with each one differently?
-Class should handle if ticker is valid or not
+add commas for thousands, millions, etc.
+add colors to positive/negative
