@@ -33,9 +33,16 @@ class Data
 	//Market cap doesnt have a decimal and has more than 1 comma
 	string formatNumber(string fund)
 	{
+		bool negative = fund[0] == '-';
+		negative && &(fund = fund.substr(1));
+
 		size_t decimalIndex = fund.find('.');
-		for (decimalIndex == string::npos && (decimalIndex = fund.size()); decimalIndex > 3; decimalIndex -= 3)
+		decimalIndex == string::npos && (decimalIndex = fund.size());
+
+		for ( ; decimalIndex > 3; decimalIndex -= 3)
 			fund.insert(decimalIndex - 3, ",");
+
+		negative && &fund.insert(0, "-");
 		return fund;
 	}
 
@@ -61,8 +68,6 @@ class Data
 		
 		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
 		string marketChange = formatNumber(getAttribute("regularMarketChange"));
-		//Deal with dollar sign here
-		       marketChange.insert((marketChange[0] == '-' ? 1 : 0), "$");
 
 		string marketCap = formatNumber(getAttribute("marketCap"));
 		string coinSupply;
@@ -75,10 +80,11 @@ class Data
 		string ask = formatNumber(getAttribute("ask"));
 
 		return ticker + ": " + name + " (" + exchangeName + ")\n"
-			      + padding + "$" + marketPrice + " (" + marketChange + ")" + "\n"
-			      + padding + "Market Cap: $" + marketCap + "\n"
-			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
-			      + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">";
+			      + padding + "$" + marketPrice + " (" + marketChange + "%)" + "\n"
+			      + padding + "Market Cap: $" + marketCap
+			      + (isCrypto ? + "\n" + padding + "Circulating Supply: " + coinSupply : "");
+//			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
+//			      + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">";
 	}
 
 	string getPrice()
