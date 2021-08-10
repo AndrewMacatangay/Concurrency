@@ -1,3 +1,4 @@
+8/10/2021 - Start adding commands so that the client can get specific data
 8/7/2021  - Add more information on server side that the client can access
 	    Possibly add commands to view a specific attribute
 8/5/2021  - Account for ticker symbols that do not exist
