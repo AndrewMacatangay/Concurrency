@@ -78,7 +78,6 @@ class Data
 
 		string bid = formatNumber(getAttribute("bid"));
 		string ask = formatNumber(getAttribute("ask"));
-
 		return ticker + ": " + name + " (" + exchangeName + ")\n"
 			      + padding + "$" + marketPrice + " (" + marketChange + "%)" + "\n"
 			      + padding + "Market Cap: $" + marketCap

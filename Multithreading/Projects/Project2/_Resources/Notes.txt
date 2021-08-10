@@ -8,7 +8,4 @@ Today:
 regularMarketLow regularMarketHigh
 bid ask
 
-add commas for thousands, millions, etc.
-add colors to positive/negative
-
-test btc
+Make commands
