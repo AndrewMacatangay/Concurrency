@@ -18,9 +18,14 @@ int main()
 	if(connect(clientSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0)
 	{ cerr << "Failed!" << endl; return 1; }
 
+	//Wait for the opening message, then print it
+	char buffer[4096] = {1};
+	read(clientSocket, buffer, 4096);
+	cout << buffer << endl << endl;
+	
 	//Ask the user to enter a ticker symbol and wait for a response from
 	//the server if the input was valid. Do this indefinitely
-	for (char buffer[4096] = {1}; 1; )
+	while (1)
 	{
 		//Clear the buffer, store the input, and convert it to a string
 		//for processing
@@ -28,11 +33,11 @@ int main()
 		cout << "Enter a ticker symbol: ";
 		cin.getline(buffer, 4096);
 		string b2s(buffer);
-
+		
 		//If an escape character or all characters are whitespace
 		//characters, the ticker is invalid
 		if (b2s.find(27) != b2s.npos || all_of(b2s.begin(), b2s.end(), [](char c){ return isspace(c); }))
-		{ cout << "Invalid ticker symbol!\n\n"; continue; }
+		{ cout << "Error: Invalid ticker symbol!\n\n"; continue; }
 
 		//Now that the input is well-formatted, send it to the server
 		//for processing. Wait until the server sends back information

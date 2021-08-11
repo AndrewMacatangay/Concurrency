@@ -48,32 +48,47 @@ string fetchData(string ticker)
 void communicate(int FD, int connection)
 {
 	string response;
-	for (char buffer[4096] = {1}; 1; )
+	
+	//Send opening message to the client
+	string buffer = "Welcome to the stock market query! Type 'help' for commands";
+	send(FD, buffer.c_str(), buffer.size() + 1, 0);
+	
+	for (char cStrBuffer[4096] = {1}; 1; )
 	{
 		//Clear the buffer and read the input. Store the input
 		//into a string for ease of processing
-		memset(buffer, 0, 4096);
-		read(FD, buffer, 4096);
-		string query = buffer;
+		memset(cStrBuffer, 0, 4096);
+		read(FD, cStrBuffer, 4096);
+		string query = cStrBuffer;
 
 		//If a client disconnects, the loop continues for some reason,
 		//and buffer[0] eventually becomes '\0'. This may need to be
 		//revised in the future
-		if (buffer[0])
+		if (query == "help")
 		{
+			string padding(10, ' ');
+			cout << "Client " << connection << ": " << query << "\n\n";
+			buffer = "Commands: <ticker>\n"
+				+ padding + "<ticker> today";
+			strncpy(cStrBuffer, buffer.c_str(), 4096);
+		}
+		else if (query.size())
+		{
+			//Deal with cases here - check if "today" in query
+
 			//Fetch the data and store it into the buffer. If the
 			//ticker symbol is valid, print the information on the
 			//server side for bookkeeping
-			strncpy(buffer, fetchData(buffer).c_str(), 4096);
-			if (string(buffer).find("Error") == string::npos)
+			strncpy(cStrBuffer, fetchData(cStrBuffer).c_str(), 4096);
+			if (string(cStrBuffer).find("Error") == string::npos)
 				cout << "Client " << connection << ": " << query << "\n"
-				     << buffer << "\n\n";
+				     << cStrBuffer << "\n\n";
 		}
 		else
 			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
 		
 		//Send the information to the client
-		send(FD, buffer, strlen(buffer), 0);
+		send(FD, cStrBuffer, strlen(cStrBuffer), 0);
 	}
 }
 
