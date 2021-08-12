@@ -17,8 +17,11 @@ int curlWriter(char* data, int size, int nmemb, string* buffer)
 }
 
 //Uses cURL to fetch data from Yahoo Finance
-string fetchData(string ticker)
+string fetchData(string ticker, int fetchType)
 {
+	//If the command if for today's information
+	fetchType == 1 && &(ticker = ticker.substr(0, ticker.find(' ')));
+
 	//Convert the ticker symbol to all uppercase letters
 	//Might be an issue with adding commas to the ticker
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
@@ -39,7 +42,12 @@ string fetchData(string ticker)
 	//Create a new data object which will parse the JSON string
 	//based on the member function called
 	Data stockData(ticker, curlBuffer);
-	return stockData.getBasicInformation();
+	string returnBuffer;
+
+	!fetchType && &(returnBuffer = stockData.getBasicInformation());
+	fetchType == 1 && &(returnBuffer = stockData.getTodaysInformation());
+	
+	return returnBuffer;
 }
 
 //Communicates with the accepted connection indefintely. Once a command or 
@@ -75,11 +83,14 @@ void communicate(int FD, int connection)
 		else if (query.size())
 		{
 			//Deal with cases here - check if "today" in query
-
+			if (query.find("today") != string::npos)
+				strncpy(cStrBuffer, fetchData(cStrBuffer, 1).c_str(), 4096);
 			//Fetch the data and store it into the buffer. If the
 			//ticker symbol is valid, print the information on the
 			//server side for bookkeeping
-			strncpy(cStrBuffer, fetchData(cStrBuffer).c_str(), 4096);
+			else
+				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
+			
 			if (string(cStrBuffer).find("Error") == string::npos)
 				cout << "Client " << connection << ": " << query << "\n"
 				     << cStrBuffer << "\n\n";

@@ -27,9 +27,8 @@ int main()
 	//the server if the input was valid. Do this indefinitely
 	while (1)
 	{
-		//Clear the buffer, store the input, and convert it to a string
+		//Store the input into cin and convert it to a string
 		//for processing
-		memset(buffer, 0, 4096);
 		cout << "Enter a ticker symbol: ";
 		cin.getline(buffer, 4096);
 		string b2s(buffer);
@@ -40,9 +39,10 @@ int main()
 		{ cout << "Error: Invalid ticker symbol!\n\n"; continue; }
 
 		//Now that the input is well-formatted, send it to the server
-		//for processing. Wait until the server sends back information
-		//and read it
+		//for processing. Clear the buffer, wait until the server sends
+		//back information, and read it
 		send(clientSocket, buffer, strlen(buffer), 0);
+		memset(buffer, 0, 4096);
 		read(clientSocket, buffer, 4096);
 		cout << buffer << endl << endl;
 	}

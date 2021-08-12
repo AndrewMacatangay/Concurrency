@@ -83,23 +83,38 @@ class Data
 		string exchangeName = getAttribute(isCrypto ? "quoteSourceName" : "fullExchangeName");
 		
 		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
-		string marketChange = formatNumber(getAttribute("regularMarketChange"));
-		marketChange.insert(marketChange[0] == '-' ? 1 : 0, "$");
 
 		string marketCap = formatNumber(getAttribute("marketCap"));
 		string coinSupply;
 		isCrypto && &(coinSupply = formatNumber(getAttribute("circulatingSupply")));
+
+		return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
+			      + padding + "Market Cap: $" + marketCap
+			      + (isCrypto ? + "\n" + padding + "Circulating Supply: " + coinSupply : "");
+	}
+	
+	//Executed when "today" is included in the query
+	string getTodaysInformation()
+	{
+		if (!isValidTicker)
+			return "Error: Invalid Ticker Symbol";
+
+		string padding(ticker.size() + 2, ' ');
+
+		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
+		string marketChange = formatNumber(getAttribute("regularMarketChange"));
+		marketChange.insert(0, marketChange[0] == '-' ? "" : "+");
+		marketChange.insert(1, "$");
 
 		string marketLow = formatNumber(getAttribute("regularMarketDayLow"));
 		string marketHigh = formatNumber(getAttribute("regularMarketDayHigh"));
 
 		string bid = formatNumber(getAttribute("bid"));
 		string ask = formatNumber(getAttribute("ask"));
-		return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
-			      + padding + "Market Cap: $" + marketCap
-			      + (isCrypto ? + "\n" + padding + "Circulating Supply: " + coinSupply : "");
-//			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
-//			      + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">";
+		
+		return ticker + ": $" + marketPrice + " (" + marketChange + ")\n" 
+			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
+			      + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">";
 	}
 
 	string getPrice()
