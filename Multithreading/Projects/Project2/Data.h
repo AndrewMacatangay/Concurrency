@@ -79,18 +79,17 @@ class Data
 
 		string padding(ticker.size() + 2, ' ');
 
-		string name = getAttribute("shortName");
+		string name         = getAttribute("shortName");
 		string exchangeName = getAttribute(isCrypto ? "quoteSourceName" : "fullExchangeName");
-		
-		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
+		string marketPrice  = formatNumber(getAttribute("regularMarketPrice"));
 
-		string marketCap = formatNumber(getAttribute("marketCap"));
-		string coinSupply;
-		isCrypto && &(coinSupply = formatNumber(getAttribute("circulatingSupply")));
+		string marketCap    = formatNumber(getAttribute("marketCap"));
+
+		string coinSupply   = isCrypto ? formatNumber(getAttribute("circulatingSupply")) : "";
 
 		return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
 			      + padding + "Market Cap: $" + marketCap
-			      + (isCrypto ? + "\n" + padding + "Circulating Supply: " + coinSupply : "");
+			      + (isCrypto ? "\n" + padding + "Circulating Supply: " + coinSupply : "");
 	}
 	
 	//Executed when "today" is included in the query
@@ -101,20 +100,26 @@ class Data
 
 		string padding(ticker.size() + 2, ' ');
 
-		string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
-		string marketChange = formatNumber(getAttribute("regularMarketChange"));
+		string marketPrice         = formatNumber(getAttribute("regularMarketPrice"));
+		string marketChange        = formatNumber(getAttribute("regularMarketChange"));
 		marketChange.insert(0, marketChange[0] == '-' ? "" : "+");
 		marketChange.insert(1, "$");
+		string marketChangePercent = formatNumber(getAttribute("regularMarketChangePercent"));
+		marketChangePercent.insert(0, marketChangePercent[0] == '-' ? "" : "+");
 
-		string marketLow = formatNumber(getAttribute("regularMarketDayLow"));
-		string marketHigh = formatNumber(getAttribute("regularMarketDayHigh"));
+		string marketLow           = formatNumber(getAttribute("regularMarketDayLow"));
+		string marketHigh          = formatNumber(getAttribute("regularMarketDayHigh"));
 
-		string bid = formatNumber(getAttribute("bid"));
-		string ask = formatNumber(getAttribute("ask"));
+		string marketClose         = formatNumber(getAttribute("regularMarketPreviousClose"));
+		string marketOpen          = formatNumber(getAttribute("regularMarketOpen"));
+
+		string bid                 = formatNumber(getAttribute("bid"));
+		string ask                 = formatNumber(getAttribute("ask"));
 		
-		return ticker + ": $" + marketPrice + " (" + marketChange + ")\n" 
+		return ticker + ": $" + marketPrice + " (" + marketChange + ", " + marketChangePercent + "%)\n" 
 			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
-			      + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">";
+			      + padding + "Close/Open: {$" + marketClose + ", $" + marketOpen + "}"
+			      + (!isCrypto ? "\n" + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">" : "");
 	}
 
 	string getPrice()

@@ -1,11 +1,18 @@
-Basic Info:
-longName fullExchangeName regularMarketPrice
+Basic Info (Just ticker):
+shortName fullExchangeName/quoteSourceName regularMarketPrice
 marketCap
 circulatingSupply (crypto)
 
 Today:
-regularMarketChange regularMarketChangePercent
+regularMarketPrice regularMarketChange regularMarketChangePercent
 regularMarketLow regularMarketHigh
-bid ask
+regularMarketPreviousClose regularMarketOpen
+bid ask (non-crypto)
+
+DayAverage:
+
+Volume:
+
+Year:
 
 Make commands

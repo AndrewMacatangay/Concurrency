@@ -77,7 +77,10 @@ void communicate(int FD, int connection)
 			string padding(10, ' ');
 			cout << "Client " << connection << ": " << query << "\n\n";
 			buffer = "Commands: <ticker>\n"
-				+ padding + "<ticker> today";
+				 + padding + "<ticker> today\n"
+				 + padding + "<ticker> dayaverages\n"
+				 + padding + "<ticker> volumes\n"
+				 + padding + "<ticker> year";
 			strncpy(cStrBuffer, buffer.c_str(), 4096);
 		}
 		else if (query.size())
