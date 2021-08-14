@@ -19,8 +19,12 @@ int curlWriter(char* data, int size, int nmemb, string* buffer)
 //Uses cURL to fetch data from Yahoo Finance
 string fetchData(string ticker, int fetchType)
 {
-	//If the command if for today's information
-	fetchType == 1 && &(ticker = ticker.substr(0, ticker.find(' ')));
+	//Catch any invalid queries here: ("tsla lksmd")
+	if (!fetchType && ticker.find(' ') != string::npos)
+		return "Error: Invalid Query";
+
+	//Extract the ticker symbol from the rest of the query
+	ticker = ticker.substr(0, ticker.find(' '));
 
 	//Convert the ticker symbol to all uppercase letters
 	//Might be an issue with adding commas to the ticker
@@ -37,16 +41,18 @@ string fetchData(string ticker, int fetchType)
 	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	if (curl_easy_perform(curl))
-		return "Error loading ticker symbol!";
+		return "Error: CURL Failed!";
 
 	//Create a new data object which will parse the JSON string
 	//based on the member function called
 	Data stockData(ticker, curlBuffer);
 	string returnBuffer;
 
-	!fetchType && &(returnBuffer = stockData.getBasicInformation());
-	fetchType == 1 && &(returnBuffer = stockData.getTodaysInformation());
-	
+	//Unecessary copying here
+	if      (fetchType == 0) returnBuffer = stockData.getBasicInformation();
+	else if (fetchType == 1) returnBuffer = stockData.getTodaysInformation();
+	else if (fetchType == 2) returnBuffer = stockData.getDayAverages();
+
 	return returnBuffer;
 }
 
@@ -78,19 +84,21 @@ void communicate(int FD, int connection)
 			cout << "Client " << connection << ": " << query << "\n\n";
 			buffer = "Commands: <ticker>\n"
 				 + padding + "<ticker> today\n"
-				 + padding + "<ticker> dayaverages\n"
+				 + padding + "<ticker> day averages\n"
 				 + padding + "<ticker> volumes\n"
 				 + padding + "<ticker> year";
 			strncpy(cStrBuffer, buffer.c_str(), 4096);
 		}
+		//Fetch the data and store it into the buffer. If the
+		//ticker symbol is valid, print the information on the
+		//server side for bookkeeping
 		else if (query.size())
 		{
 			//Deal with cases here - check if "today" in query
 			if (query.find("today") != string::npos)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 1).c_str(), 4096);
-			//Fetch the data and store it into the buffer. If the
-			//ticker symbol is valid, print the information on the
-			//server side for bookkeeping
+			else if (query.find("day averages") != string::npos)
+				strncpy(cStrBuffer, fetchData(cStrBuffer, 2).c_str(), 4096);
 			else
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
 			
