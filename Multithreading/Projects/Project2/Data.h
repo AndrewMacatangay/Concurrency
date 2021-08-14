@@ -119,9 +119,9 @@ class Data
 		marketChangePercent.insert(0, marketChangePercent[0] == '-' ? "" : "+");
 		
 		return ticker + ": $" + marketPrice + " (" + marketChange + ", " + marketChangePercent + "%)\n" 
-			      + padding + "Range: [$" + marketLow + ", $" + marketHigh + "]\n"
+			      + padding + "Range:      [$" + marketLow + ", $" + marketHigh + "]\n"
 			      + padding + "Close/Open: {$" + marketClose + ", $" + marketOpen + "}"
-			      + (!isCrypto ? "\n" + padding + "Bid/Ask: <$" + bid + ", $" + ask + ">" : "");
+			      + (!isCrypto ? "\n" + padding + "Bid/Ask:    <$" + bid + ", $" + ask + ">" : "");
 	}
 
 	//Executed when "day averages" is included in the query
@@ -146,11 +146,9 @@ class Data
 		FDAC.insert(0, FDAC[0] == '-' ? "" : "+");
 		FDAC.insert(1, "$");
 		FDACP.insert(0, FDACP[0] == '-' ? "" : "+");
-		FDACP.insert(1, "$");
 		THDAC.insert(0, THDAC[0] == '-' ? "" : "+");
 		THDAC.insert(1, "$");
 		THDACP.insert(0, THDACP[0] == '-' ? "" : "+");
-		THDACP.insert(1, "$");
 
 		return ticker + ": $" + marketPrice + "\n"
 		              + padding + "50 Day:  $" + FDA + " (" + FDAC + ", " + FDACP + "%)\n"
