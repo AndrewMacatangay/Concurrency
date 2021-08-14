@@ -154,6 +154,25 @@ class Data
 		              + padding + "50 Day:  $" + FDA + " (" + FDAC + ", " + FDACP + "%)\n"
 			      + padding + "200 Day: $" + THDA + " (" + THDAC + ", " + THDACP + "%)";
 	}
+	
+	string getVolumes()
+	{
+		if (!isValidTicker)
+			cout << "Error: Invalid Ticker Symbol";
+		
+		string padding(ticker.size() + 2, ' ');
+
+		string marketPrice        = formatNumber(getAttribute("regularMarketPrice"));
+	
+		string marketVolume       = formatNumber(getAttribute("regularMarketVolume"));
+		string averageDaily3Month = formatNumber(getAttribute("averageDailyVolume3Month"));
+		string averageDaily10Day  = formatNumber(getAttribute("averageDailyVolume10Day"));
+
+		return ticker + ": $" + marketPrice + "\n"
+		              + padding + "Today's Volume:        " + marketVolume + "\n"
+			      + padding + "Average Daily 3 Month: " + averageDaily3Month + "\n"
+			      + padding + "Average Daily 10 Day:  " + averageDaily10Day;
+	}
 
 	string getPrice()
 	{

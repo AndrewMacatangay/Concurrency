@@ -52,6 +52,7 @@ string fetchData(string ticker, int fetchType)
 	if      (fetchType == 0) returnBuffer = stockData.getBasicInformation();
 	else if (fetchType == 1) returnBuffer = stockData.getTodaysInformation();
 	else if (fetchType == 2) returnBuffer = stockData.getDayAverages();
+	else if (fetchType == 3) returnBuffer = stockData.getVolumes();
 
 	return returnBuffer;
 }
@@ -99,6 +100,8 @@ void communicate(int FD, int connection)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 1).c_str(), 4096);
 			else if (query.find("day averages") != string::npos)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 2).c_str(), 4096);
+			else if (query.find("volumes") != string::npos)
+				strncpy(cStrBuffer, fetchData(cStrBuffer, 3).c_str(), 4096);
 			else
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
 			
