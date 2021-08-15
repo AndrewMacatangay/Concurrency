@@ -118,7 +118,8 @@ class Data
 		marketChange.insert(1, "$");
 		marketChangePercent.insert(0, marketChangePercent[0] == '-' ? "" : "+");
 		
-		return ticker + ": $" + marketPrice + " (" + marketChange + ", " + marketChangePercent + "%)\n" 
+		return ticker + ": $" + marketPrice + "\n" 
+			      + padding + "Change:     (" + marketChange + ", " + marketChangePercent + "%)\n"
 			      + padding + "Range:      [$" + marketLow + ", $" + marketHigh + "]\n"
 			      + padding + "Close/Open: {$" + marketClose + ", $" + marketOpen + "}"
 			      + (!isCrypto ? "\n" + padding + "Bid/Ask:    <$" + bid + ", $" + ask + ">" : "");
@@ -172,6 +173,41 @@ class Data
 		              + padding + "Today's Volume:        " + marketVolume + "\n"
 			      + padding + "Average Daily 3 Month: " + averageDaily3Month + "\n"
 			      + padding + "Average Daily 10 Day:  " + averageDaily10Day;
+	}
+
+	string getYear()
+	{
+		if (!isValidTicker)
+			cout << "Error: Invalid Ticker Symbol";
+
+		string padding(ticker.size() + 2, ' ');
+
+		string marketPrice           = formatNumber(getAttribute("regularMarketPrice"));
+
+		string yearRange             = getAttribute("fiftyTwoWeekRange");
+		
+		string yearLowChange         = formatNumber(getAttribute("fiftyTwoWeekLowChange"));
+		string yearLowChangePercent  = formatNumber(getAttribute("fiftyTwoWeekLowChangePercent"));
+
+		string yearHighChange        = formatNumber(getAttribute("fiftyTwoWeekHighChange"));
+		string yearHighChangePercent = formatNumber(getAttribute("fiftyTwoWeekHighChangePercent"));
+
+		string yearLow = formatNumber(yearRange.substr(0, yearRange.find(' ')));
+		string yearHigh = formatNumber(yearRange.substr(yearRange.find(' ') + 3));
+
+		//Any modications made to the attributes are done here
+		yearLowChange.insert(0, yearLowChange[0] == '-' ? "" : "+");
+		yearLowChange.insert(1, "$");
+		yearLowChangePercent.insert(0, yearLowChangePercent[0] == '-' ? "" : "+");
+		yearHighChange.insert(0, yearHighChange[0] == '-' ? "" : "+");
+		yearHighChange.insert(1, "$");
+		yearHighChangePercent.insert(0, yearHighChangePercent[0] == '-' ? "" : "+");
+		
+
+		return ticker + ": $" + marketPrice + "\n"
+			      + padding + "Fifty-Two Week Range:       [$" + yearLow + ", $" + yearHigh + "]\n"
+			      + padding + "Fifty-Two Week Low Change:  (" + yearLowChange + ", " + yearLowChangePercent + "%)\n"
+			      + padding + "Fifty-Two Week High Change: (" + yearHighChange + ", " + yearHighChangePercent + "%)";
 	}
 
 	string getPrice()
