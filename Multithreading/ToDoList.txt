@@ -1,3 +1,4 @@
+8/16/2021 - Revise "day averages" command or getAttributes() to fix substring bug
 8/15/2021 - Split Data.h to Data.h and Data.cpp
 	    Fix multi-commands bug
 	    Create login capabilities
