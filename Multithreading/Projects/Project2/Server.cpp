@@ -1,12 +1,4 @@
-#include <algorithm>
-#include <cstring>
-#include <curl/curl.h>
-#include <iostream>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <thread>
-#include <unistd.h>
-using namespace std;
+#include "Libraries.h"
 #include "Data.h"
 
 //Mutex needed for race conditions on cout

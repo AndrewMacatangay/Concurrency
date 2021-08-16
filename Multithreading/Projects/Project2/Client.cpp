@@ -1,11 +1,4 @@
-#include <algorithm>
-#include <arpa/inet.h>
-#include <cstring>
-#include <iostream>
-#include <locale>
-#include <string>
-#include <unistd.h>
-using namespace std;
+#include "Libraries.h"
 
 int main()
 {

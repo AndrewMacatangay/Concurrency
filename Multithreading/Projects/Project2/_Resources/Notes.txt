@@ -16,3 +16,4 @@ Volume:
 Year:
 
 Multi-commands?
+Revise day averages. There is a substring issue with the attributes
