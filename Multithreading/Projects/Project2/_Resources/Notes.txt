@@ -17,3 +17,4 @@ Year:
 
 Multi-commands?
 Revise day averages. There is a substring issue with the attributes
+See if you can condense libraries. (cstring and string)

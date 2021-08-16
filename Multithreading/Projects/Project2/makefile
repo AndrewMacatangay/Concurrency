@@ -15,8 +15,5 @@ runClient: Client
 Data: Data.h Libraries.h
 	g++ -g -Wall Data.cpp -o Data
 
-Scraper: Scraper.cpp
-	g++ -g -Wall Scraper.cpp -o Scraper -lcurl
-
 clean:
-	rm Server Client Data Scraper
+	rm Server Client Data
