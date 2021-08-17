@@ -14,5 +14,3 @@ DayAverage:
 Volume:
 
 Year:
-
-See if you can condense libraries. (cstring and string)

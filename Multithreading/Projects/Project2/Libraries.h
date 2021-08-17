@@ -8,7 +8,6 @@
 #include <iostream>
 #include <locale>
 #include <netinet/in.h>
-#include <string>
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
