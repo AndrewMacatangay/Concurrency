@@ -12,14 +12,13 @@ int curlWriter(char* data, int size, int nmemb, string* buffer)
 string fetchData(string ticker, int fetchType)
 {
 	//Catch any invalid queries here: ("tsla lksmd")
-	if (!fetchType && ticker.find(' ') != string::npos)
+	if (!fetchType && ticker.find(' ') != ticker.npos)
 		return "Error: Invalid Query";
 
 	//Extract the ticker symbol from the rest of the query
 	ticker = ticker.substr(0, ticker.find(' '));
 
 	//Convert the ticker symbol to all uppercase letters
-	//Might be an issue with adding commas to the ticker
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 
 	//Declare and initialize the cURL object and store the JSON string
@@ -88,18 +87,21 @@ void communicate(int FD, int connection)
 		//server side for bookkeeping
 		else if (query.size())
 		{
-			//Deal with cases here - check if "today" in query
-			if (query.find("today") != string::npos)
+			size_t start = query.find(" ");
+			size_t size = query.size();
+
+			//Check if commands are valid here. If they are, call fetchData()
+			if      (query.find(" today") != query.npos && size - 6 == start)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 1).c_str(), 4096);
-			else if (query.find("day averages") != string::npos)
+			else if (query.find(" day averages") != query.npos && size - 13 == start)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 2).c_str(), 4096);
-			else if (query.find("volumes") != string::npos)
+			else if (query.find(" volumes") != query.npos && size - 8 == start)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 3).c_str(), 4096);
-			else if (query.find("year") != string::npos)
+			else if (query.find(" year") != query.npos && size - 5 == start)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 4).c_str(), 4096);
 			else
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
-			
+
 			if (string(cStrBuffer).find("Error") == string::npos)
 				cout << "Client " << connection << ": " << query << "\n"
 				     << cStrBuffer << "\n\n";

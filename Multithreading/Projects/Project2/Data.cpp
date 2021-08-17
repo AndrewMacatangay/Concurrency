@@ -13,7 +13,7 @@ string Data::getAttribute(string attribute)
 	
 	//We want to slice the string from the beginning of the data
 	//to the end of the JSON string for now
-	buffer = JSON.substr(attributeIndex + attribute.size() + 2);
+	buffer = JSON.substr(attributeIndex + attribute.size());
 
 	//At this point we have either a string or a double that we need to reformat.
 	//We have to slice the string such that the remaining attributes from the JSON
@@ -60,9 +60,10 @@ string Data::formatNumber(string number)
 //ticker symbol is valid to avoid extra computation
 Data::Data(string ticker, string curlBuffer) : ticker(ticker), JSON(curlBuffer)
 {
-	isValidTicker = JSON.find("\"result\":[]") == string::npos &&
-			JSON.find("regularMarketPrice") != string::npos;
-	isCrypto = JSON.find("CRYPTOCURRENCY") != string::npos;
+	isValidTicker = JSON.find("\"result\":[]") == JSON.npos &&
+			JSON.find("regularMarketPrice") != JSON.npos;
+
+	isCrypto = JSON.find("CRYPTOCURRENCY") != JSON.npos;
 }
 
 //Executed when only the ticker symbol is given
@@ -72,14 +73,11 @@ string Data::getBasicInformation()
 		return "Error: Invalid Ticker Symbol";
 
 	string padding(ticker.size() + 2, ' ');
-
-	string name         = getAttribute("shortName");
-	string exchangeName = getAttribute(isCrypto ? "quoteSourceName" : "fullExchangeName");
-	string marketPrice  = formatNumber(getAttribute("regularMarketPrice"));
-
-	string marketCap    = formatNumber(getAttribute("marketCap"));
-
-	string coinSupply   = isCrypto ? formatNumber(getAttribute("circulatingSupply")) : "";
+	string name         = getAttribute("\"shortName\":");
+	string exchangeName = getAttribute(isCrypto ? "\"quoteSourceName\":" : "\"fullExchangeName\":");
+	string marketPrice  = formatNumber(getAttribute("\"regularMarketPrice\":"));
+	string marketCap    = formatNumber(getAttribute("\"marketCap\":"));
+	string coinSupply   = isCrypto ? formatNumber(getAttribute("\"circulatingSupply\":")) : "";
 
 	return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
 		      + padding + "Market Cap: $" + marketCap
@@ -93,21 +91,17 @@ string Data::getTodaysInformation()
 		return "Error: Invalid Ticker Symbol";
 
 	string padding(ticker.size() + 2, ' ');
+	string marketPrice         = formatNumber(getAttribute("\"regularMarketPrice\":"));
+	string marketChange        = formatNumber(getAttribute("\"regularMarketChange\":"));
+	string marketChangePercent = formatNumber(getAttribute("\"regularMarketChangePercent\":"));
+	string marketLow           = formatNumber(getAttribute("\"regularMarketDayLow\":"));
+	string marketHigh          = formatNumber(getAttribute("\"regularMarketDayHigh\":"));
+	string marketClose         = formatNumber(getAttribute("\"regularMarketPreviousClose\":"));
+	string marketOpen          = formatNumber(getAttribute("\"regularMarketOpen\":"));
+	string bid                 = formatNumber(getAttribute("\"bid\":"));
+	string ask                 = formatNumber(getAttribute("\"ask\":"));
 
-	string marketPrice         = formatNumber(getAttribute("regularMarketPrice"));
-	string marketChange        = formatNumber(getAttribute("regularMarketChange"));
-	string marketChangePercent = formatNumber(getAttribute("regularMarketChangePercent"));
-
-	string marketLow           = formatNumber(getAttribute("regularMarketDayLow"));
-	string marketHigh          = formatNumber(getAttribute("regularMarketDayHigh"));
-
-	string marketClose         = formatNumber(getAttribute("regularMarketPreviousClose"));
-	string marketOpen          = formatNumber(getAttribute("regularMarketOpen"));
-
-	string bid                 = formatNumber(getAttribute("bid"));
-	string ask                 = formatNumber(getAttribute("ask"));
-
-	//Any modications made to the attributes are done here
+	//Any modifications made to the attributes are done here
 	marketChange.insert(0, marketChange[0] == '-' ? "" : "+");
 	marketChange.insert(1, "$");
 	marketChangePercent.insert(0, marketChangePercent[0] == '-' ? "" : "+");
@@ -126,18 +120,15 @@ string Data::getDayAverages()
 		return "Error: Invalid Ticker Symbol";
 
 	string padding(ticker.size() + 2, ' ');
+	string marketPrice = formatNumber(getAttribute("\"regularMarketPrice\":"));
+	string FDA         = formatNumber(getAttribute("\"fiftyDayAverage\":"));
+	string FDAC        = formatNumber(getAttribute("\"fiftyDayAverageChange\":"));
+	string FDACP       = formatNumber(getAttribute("\"fiftyDayAverageChangePercent\":"));
+	string THDA        = formatNumber(getAttribute("\"twoHundredDayAverage\":"));
+	string THDAC       = formatNumber(getAttribute("\"twoHundredDayAverageChange\":"));
+	string THDACP      = formatNumber(getAttribute("\"twoHundredDayAverageChangePercent\":"));
 
-	string marketPrice = formatNumber(getAttribute("regularMarketPrice"));
-
-	string FDA         = formatNumber(getAttribute("fiftyDayAverage"));
-	string FDAC        = formatNumber(getAttribute("fiftyDayAverageChange"));
-	string FDACP       = formatNumber(getAttribute("fiftyDayAverageChangePercent"));
-
-	string THDA        = formatNumber(getAttribute("twoHundredDayAverage"));
-	string THDAC       = formatNumber(getAttribute("twoHundredDayAverageChange"));
-	string THDACP      = formatNumber(getAttribute("twoHundredDayAverageChangePercent"));
-
-	//Any modications made to the attributes are done here
+	//Any modifications made to the attributes are done here
 	FDAC.insert(0, FDAC[0] == '-' ? "" : "+");
 	FDAC.insert(1, "$");
 	FDACP.insert(0, FDACP[0] == '-' ? "" : "+");
@@ -154,15 +145,13 @@ string Data::getDayAverages()
 string Data::getVolumes()
 {
 	if (!isValidTicker)
-		cout << "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol";
 	
 	string padding(ticker.size() + 2, ' ');
-
-	string marketPrice        = formatNumber(getAttribute("regularMarketPrice"));
-
-	string marketVolume       = formatNumber(getAttribute("regularMarketVolume"));
-	string averageDaily3Month = formatNumber(getAttribute("averageDailyVolume3Month"));
-	string averageDaily10Day  = formatNumber(getAttribute("averageDailyVolume10Day"));
+	string marketPrice        = formatNumber(getAttribute("\"regularMarketPrice\":"));
+	string marketVolume       = formatNumber(getAttribute("\"regularMarketVolume\":"));
+	string averageDaily3Month = formatNumber(getAttribute("\"averageDailyVolume3Month\":"));
+	string averageDaily10Day  = formatNumber(getAttribute("\"averageDailyVolume10Day\":"));
 
 	return ticker + ": $" + marketPrice + "\n"
 	              + padding + "Today's Volume:        " + marketVolume + "\n"
@@ -174,24 +163,18 @@ string Data::getVolumes()
 string Data::getYear()
 {
 	if (!isValidTicker)
-		cout << "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol";
 
 	string padding(ticker.size() + 2, ' ');
+	string marketPrice           = formatNumber(getAttribute("\"regularMarketPrice\":"));
+	string yearLow               = formatNumber(getAttribute("\"fiftyTwoWeekLow\":"));
+	string yearHigh              = formatNumber(getAttribute("\"fiftyTwoWeekHigh\":"));
+	string yearLowChange         = formatNumber(getAttribute("\"fiftyTwoWeekLowChange\":"));
+	string yearLowChangePercent  = formatNumber(getAttribute("\"fiftyTwoWeekLowChangePercent\":"));
+	string yearHighChange        = formatNumber(getAttribute("\"fiftyTwoWeekHighChange\":"));
+	string yearHighChangePercent = formatNumber(getAttribute("\"fiftyTwoWeekHighChangePercent\":"));
 
-	string marketPrice           = formatNumber(getAttribute("regularMarketPrice"));
-
-	string yearRange             = getAttribute("fiftyTwoWeekRange");
-	
-	string yearLowChange         = formatNumber(getAttribute("fiftyTwoWeekLowChange"));
-	string yearLowChangePercent  = formatNumber(getAttribute("fiftyTwoWeekLowChangePercent"));
-
-	string yearHighChange        = formatNumber(getAttribute("fiftyTwoWeekHighChange"));
-	string yearHighChangePercent = formatNumber(getAttribute("fiftyTwoWeekHighChangePercent"));
-
-	string yearLow = formatNumber(yearRange.substr(0, yearRange.find(' ')));
-	string yearHigh = formatNumber(yearRange.substr(yearRange.find(' ') + 3));
-
-	//Any modications made to the attributes are done here
+	//Any modifications made to the attributes are done here
 	yearLowChange.insert(0, yearLowChange[0] == '-' ? "" : "+");
 	yearLowChange.insert(1, "$");
 	yearLowChangePercent.insert(0, yearLowChangePercent[0] == '-' ? "" : "+");
@@ -199,7 +182,6 @@ string Data::getYear()
 	yearHighChange.insert(1, "$");
 	yearHighChangePercent.insert(0, yearHighChangePercent[0] == '-' ? "" : "+");
 	
-
 	return ticker + ": $" + marketPrice + "\n"
 		      + padding + "Fifty-Two Week Range:       [$" + yearLow + ", $" + yearHigh + "]\n"
 		      + padding + "Fifty-Two Week Low Change:  (" + yearLowChange + ", " + yearLowChangePercent + "%)\n"
