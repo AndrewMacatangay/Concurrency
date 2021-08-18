@@ -14,3 +14,5 @@ DayAverage:
 Volume:
 
 Year:
+
+Compare or login
