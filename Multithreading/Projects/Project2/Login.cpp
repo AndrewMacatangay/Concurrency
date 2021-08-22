@@ -18,15 +18,23 @@ int main()
 
 	string buffer;
 
-	fstream accounts("Accounts.csv");
+	fstream accounts("Accounts.csv", fstream::in | fstream::out);
 	cout << "Enter a name: ";
 	cin >> account.firstName;
 
 	if(accounts.is_open())
 		cout << "We are open!" << endl;
-	
-	while(getline(accounts, buffer))
+//	cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
+
+	int x;
+	accounts >> x;
+	while(x--)
+	{
 		cout << buffer << endl;
+//		cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
+	}
+	//0110
+	cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
 
 	accounts << account.firstName << "\n";
 	accounts.close();
