@@ -10,7 +10,16 @@ int main()
 	string username, buffer;
 	fstream accounts("Usernames.csv", fstream::in | fstream::out);
 	
-	getline(accounts, buffer);
+	//If there is nothing to read in, let the number of entries be 0	
+	if (!getline(accounts, buffer))
+	{
+		accounts.clear();
+		accounts.seekg(0);
+		accounts << 0 << "\n";
+		accounts.seekg(0);
+		getline(accounts, buffer);
+	}
+
 	unsigned int numberOfEntries = stoi(buffer);
 	
 	cout << "Enter a username: ";
@@ -30,7 +39,7 @@ int main()
 
 	//Since the name does not exist in the CSV file, add it
 	accounts << username << "\n";
-
+	
 	//Clear the file stream flags, update the number of names,
 	//and close the file.
 	accounts.clear();
@@ -38,6 +47,9 @@ int main()
 	accounts << numberOfEntries + 1;
 
 	accounts.close();
+
+	fstream userFile(".//UserData//" + username + ".csv", fstream::out);
+	userFile.close();
 
 	return 0;
 }
