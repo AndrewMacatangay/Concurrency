@@ -15,28 +15,31 @@ struct Account
 int main()
 {
 	Account account;
-
 	string buffer;
 
 	fstream accounts("Accounts.csv", fstream::in | fstream::out);
 	cout << "Enter a name: ";
 	cin >> account.firstName;
 
-	if(accounts.is_open())
-		cout << "We are open!" << endl;
-//	cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
+	string temp;
+	getline(accounts, temp);
+	unsigned int entries = stoi(temp);
 
-	int x;
-	accounts >> x;
-	while(x--)
+	for (int x = entries; x; x--)
 	{
-		cout << buffer << endl;
-//		cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
+		getline(accounts, buffer);
+		if (buffer == account.firstName)
+		{
+			cout << "Name already exists!" << endl;
+			accounts.close();
+			return 0;
+		}
 	}
-	//0110
-	cout << accounts.good() << accounts.eof() << accounts.fail() << accounts.bad() << endl;
 
 	accounts << account.firstName << "\n";
+	accounts.clear();
+	accounts.seekg(0);
+	accounts << entries + 1;
 	accounts.close();
 
 	return 0;
