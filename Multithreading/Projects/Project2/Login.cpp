@@ -5,30 +5,22 @@
 #include <utility>
 using namespace std;
 
-struct Account
-{
-	string firstName;
-	int ID;
-	vector<pair<string, int>> portfolio;
-};
-
 int main()
 {
-	Account account;
-	string buffer;
+	string username, buffer;
+	fstream accounts("Usernames.csv", fstream::in | fstream::out);
+	
+	getline(accounts, buffer);
+	unsigned int numberOfEntries = stoi(buffer);
+	
+	cout << "Enter a username: ";
+	cin >> username;
 
-	fstream accounts("Accounts.csv", fstream::in | fstream::out);
-	cout << "Enter a name: ";
-	cin >> account.firstName;
-
-	string temp;
-	getline(accounts, temp);
-	unsigned int entries = stoi(temp);
-
-	for (int x = entries; x; x--)
+	//Loop through the CSV files and return if the name already exists
+	for (int x = numberOfEntries; x; x--)
 	{
 		getline(accounts, buffer);
-		if (buffer == account.firstName)
+		if (buffer == username)
 		{
 			cout << "Name already exists!" << endl;
 			accounts.close();
@@ -36,10 +28,15 @@ int main()
 		}
 	}
 
-	accounts << account.firstName << "\n";
+	//Since the name does not exist in the CSV file, add it
+	accounts << username << "\n";
+
+	//Clear the file stream flags, update the number of names,
+	//and close the file.
 	accounts.clear();
 	accounts.seekg(0);
-	accounts << entries + 1;
+	accounts << numberOfEntries + 1;
+
 	accounts.close();
 
 	return 0;
