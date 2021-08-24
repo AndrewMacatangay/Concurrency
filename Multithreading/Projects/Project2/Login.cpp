@@ -19,7 +19,6 @@ int main()
 		accounts.seekg(0);
 		getline(accounts, buffer);
 	}
-
 	unsigned int numberOfEntries = stoi(buffer);
 	
 	cout << "Enter a username: ";
