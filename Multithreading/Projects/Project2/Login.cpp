@@ -9,7 +9,11 @@ int main()
 {
 	bool newAccount = 1;
 	string username, buffer;
-	fstream accounts("Usernames.csv", fstream::in | fstream::out);
+	fstream accounts;
+	
+	accounts.open("Usernames.csv", fstream::out | fstream::app);
+	accounts.close();
+	accounts.open("Usernames.csv", fstream::in | fstream::out);
 	
 	//If there is nothing to read in, let the number of entries be 0	
 	if (!getline(accounts, buffer))
@@ -51,27 +55,41 @@ int main()
 		accounts.close();
 	}
 
-	fstream userFile(".//UserData//" + username + ".csv", fstream:: in | fstream::out | fstream::app);
+	fstream userFile;
+	userFile.open(".//UserData//" + username + ".csv", fstream::out | fstream::app);
+	userFile.close();
+	userFile.open(".//UserData//" + username + ".csv", fstream::in | fstream::out);
+
 	if (newAccount)
-		userFile << 0 << endl;
-	else
 	{
-		string ticker;
+		userFile << 0 << endl;
+		userFile.seekg(0);
+	}
+
+	bool foundTicker = 0;
+	string ticker;
+	getline(userFile, buffer);
+	unsigned int numberOfTickers = stoi(buffer);
+
+	cout << "Enter a ticker symbol: ";
+	cin >> ticker;
+
+	for(int x = numberOfTickers; x; x--)
+	{
 		getline(userFile, buffer);
-		cout << buffer << endl;
-		unsigned int numberOfTickers = stoi(buffer);
-
-		cout << "Enter a ticker symbol: ";
-		cin >> ticker;
-
-		for(int x = numberOfTickers; x; x--)
+		if (ticker == buffer)
 		{
-			getline(userFile, buffer);
-			if (ticker == buffer)
-				cout << "Ticker found!" << endl;
+			foundTicker = 1;
+			cout << "Ticker found!" << endl;
 		}
-
+	}
+	if (!foundTicker)
+	{
 		cout << "Ticker not found" << endl;
+			
+		userFile << ticker << endl;
+		userFile.seekg(0);
+		userFile << numberOfTickers + 1;
 	}
 
 	userFile.close();
