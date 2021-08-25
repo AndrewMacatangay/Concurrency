@@ -7,6 +7,7 @@ using namespace std;
 
 int main()
 {
+	bool newAccount = 1;
 	string username, buffer;
 	fstream accounts("Usernames.csv", fstream::in | fstream::out);
 	
@@ -30,24 +31,49 @@ int main()
 		getline(accounts, buffer);
 		if (buffer == username)
 		{
-			cout << "Name already exists!" << endl;
-			accounts.close();
-			return 0;
+			cout << "Logged in!" << endl;
+			newAccount = 0;
+			break;
 		}
 	}
 
-	//Since the name does not exist in the CSV file, add it
-	accounts << username << "\n";
+	if (newAccount)
+	{
+		//Since the name does not exist in the CSV file, add it
+		accounts << username << "\n";
 	
-	//Clear the file stream flags, update the number of names,
-	//and close the file.
-	accounts.clear();
-	accounts.seekg(0);
-	accounts << numberOfEntries + 1;
+		//Clear the file stream flags, update the number of names,
+		//and close the file.
+		accounts.clear();
+		accounts.seekp(0);
+		accounts << numberOfEntries + 1;
 
-	accounts.close();
+		accounts.close();
+	}
 
-	fstream userFile(".//UserData//" + username + ".csv", fstream::out);
+	fstream userFile(".//UserData//" + username + ".csv", fstream:: in | fstream::out | fstream::app);
+	if (newAccount)
+		userFile << 0 << endl;
+	else
+	{
+		string ticker;
+		getline(userFile, buffer);
+		cout << buffer << endl;
+		unsigned int numberOfTickers = stoi(buffer);
+
+		cout << "Enter a ticker symbol: ";
+		cin >> ticker;
+
+		for(int x = numberOfTickers; x; x--)
+		{
+			getline(userFile, buffer);
+			if (ticker == buffer)
+				cout << "Ticker found!" << endl;
+		}
+
+		cout << "Ticker not found" << endl;
+	}
+
 	userFile.close();
 
 	return 0;

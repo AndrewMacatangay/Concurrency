@@ -15,7 +15,7 @@ runClient: Client
 Data: Data.h Libraries.h
 	g++ -g -Wall Data.cpp -o Data
 
-Login: Login.cpp Usernames.csv
+Login: Login.cpp
 	g++ -g -Wall Login.cpp -o Login
 
 clean:
