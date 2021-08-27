@@ -12,9 +12,12 @@ struct userData
 	vector<string> tickers;
 };
 
-void createUsernamesCSV(fstream& accounts, bool& newAccount, string& username)
+int createUsernamesCSV(fstream& accounts, bool& newAccount, string& username, string& password)
 {
+	//Decide whether to make a new account (register), or
+	//log into an existing account
 	string buffer;
+	bool registering = 0;
 
 	//Add the file if it doesn't exist and close it
 	accounts.open("Usernames.csv", fstream::app);
@@ -34,27 +37,49 @@ void createUsernamesCSV(fstream& accounts, bool& newAccount, string& username)
 	}
 
 	unsigned int numberOfEntries = stoi(buffer);
-	
+
+	cout << "Would you like to login or register?" << endl;
+	cin >> buffer;
+	registering = buffer == "register";
+
 	cout << "Enter a username: ";
 	cin >> username;
 
 	//Loop through the CSV files and return if the name already exists
 	for (int x = numberOfEntries; x; x--)
 	{
+		string temp;
+		getline(accounts, temp, ',');
 		getline(accounts, buffer);
-		if (buffer == username)
+		if (temp == username)
 		{
-			cout << "Logged in!" << endl;
-			newAccount = 0;
+			if (registering)
+			{
+				cout << "Username already taken!" << endl;
+				return 0;
+			}
+
+			cout << "Enter password: ";
+			cin >> password;
+			
+			if (password == buffer)
+			{
+				cout << "Logged in!" << endl;
+				newAccount = 0;
+				break;
+			}
+			cout << "Wrong password" << endl;
 			accounts.close();
-			return;
+			return 0;
 		}
 	}
 
 	if (newAccount)
 	{
+		cout << "Enter password: ";
+		cin >> password;
 		//Since the name does not exist in the CSV file, add it
-		accounts << username << "\n";
+		accounts << username << "," << password << "\n";
 	
 		//Clear the file stream flags, update the number of names,
 		//and close the file.
@@ -64,9 +89,10 @@ void createUsernamesCSV(fstream& accounts, bool& newAccount, string& username)
 
 		accounts.close();
 	}
+	return 1;
 }
 
-void createUserFile(fstream& userFile, bool& newAccount, string& username)
+void createUserFile(fstream& userFile, bool& newAccount, string& username, string& password)
 {
 	string buffer;
 	userData data;
@@ -131,11 +157,11 @@ void createUserFile(fstream& userFile, bool& newAccount, string& username)
 int main()
 {
 	bool newAccount = 1;
-	string username;
+	string username, password;
 	fstream accounts, userFile;
-	
-	createUsernamesCSV(accounts, newAccount, username);
-	createUserFile(userFile, newAccount, username);
+
+	if (createUsernamesCSV(accounts, newAccount, username, password))
+		createUserFile(userFile, newAccount, username, password);
 
 	return 0;
 }
