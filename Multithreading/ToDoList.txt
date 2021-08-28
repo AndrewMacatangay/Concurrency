@@ -1,3 +1,4 @@
+8/28/2021 - Create user list with new merged files
 8/26/2021 - Merge Login.cpp into Server.cpp
 8/23/2021 - Add data to individual CSV files
 8/16/2021 - Revise "day averages" command or getAttributes() to fix substring bug
