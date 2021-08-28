@@ -1,3 +1,5 @@
+#ifndef DATA_H
+#define DATA_H
 #include "Libraries.h"
 
 //The Data class is dedicated to receive and process a JSON string
@@ -21,3 +23,5 @@ class Data
 		string getYear();
 		string getPrice();
 };
+
+#endif

@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
+#include <vector>
 using namespace std;
 
 #endif

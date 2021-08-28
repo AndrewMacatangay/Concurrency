@@ -1,6 +1,5 @@
 #include "Libraries.h"
-#include "Data.h"
-
+#include "Account.h"
 int curlWriter(char* data, int size, int nmemb, string* buffer);
 string fetchData(string ticker, int fetchType);
 
@@ -9,6 +8,8 @@ string fetchData(string ticker, int fetchType);
 //the client
 void communicate(int FD, int connection)
 {
+	//Make Account instance here, even if the client doesn't log in or register
+	Account clientAccount;
 	string response;
 	
 	//Send opening message to the client
@@ -34,7 +35,10 @@ void communicate(int FD, int connection)
 				 + padding + "<ticker> today\n"
 				 + padding + "<ticker> day averages\n"
 				 + padding + "<ticker> volumes\n"
-				 + padding + "<ticker> year";
+				 + padding + "<ticker> year\n"
+				 + padding + "login\n" 
+				 + padding + "register";
+				 
 			strncpy(cStrBuffer, buffer.c_str(), 4096);
 		}
 		//Fetch the data and store it into the buffer. If the
@@ -56,6 +60,8 @@ void communicate(int FD, int connection)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 4).c_str(), 4096);
 			else if (query == "login")
 				cout << "Log In!\n";
+			else if(query == "register")
+				cout << "Register!\n";
 			else
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
 
