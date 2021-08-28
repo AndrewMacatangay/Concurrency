@@ -1,7 +1,7 @@
 all: Client Server
 
-Server: Server.cpp Data.cpp Data.h Libraries.h
-	g++ -g -Wall Server.cpp Data.cpp -o Server -pthread -lcurl
+Server: Server.cpp Data.cpp FetchData.cpp Data.h Libraries.h
+	g++ -g -Wall Server.cpp Data.cpp FetchData.cpp -o Server -pthread -lcurl
 
 runServer: Server
 	./Server
@@ -19,4 +19,4 @@ Login: Login.cpp
 	g++ -g -Wall Login.cpp -o Login
 
 clean:
-	rm Server Client Data Login
+	rm Server Client Data FetchData Login
