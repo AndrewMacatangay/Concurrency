@@ -11,7 +11,7 @@ class Account
 		bool isLoggedIn;
 	public:
 		Account();
-		bool loginAccount();
+		bool loginAccount(int FD);
 		bool registerAccount();
 };
 

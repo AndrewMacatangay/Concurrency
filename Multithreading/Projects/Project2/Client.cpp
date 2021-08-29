@@ -22,7 +22,7 @@ int main()
 	{
 		//Store the input into cin and convert it to a string
 		//for processing
-		cout << "Enter a command: ";
+		//cout << "Enter a command: ";
 		cin.getline(buffer, 4096);
 		string b2s(buffer);
 		
@@ -37,7 +37,7 @@ int main()
 		send(clientSocket, buffer, strlen(buffer), 0);
 		memset(buffer, 0, 4096);
 		read(clientSocket, buffer, 4096);
-		cout << buffer << endl << endl;
+		cout << buffer;
 	}
 
 	return 0;

@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <curl/curl.h>
+#include <fstream>
 #include <iostream>
 #include <locale>
 #include <netinet/in.h>

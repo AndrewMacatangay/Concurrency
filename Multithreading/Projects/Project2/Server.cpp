@@ -13,11 +13,12 @@ void communicate(int FD, int connection)
 	string response;
 	
 	//Send opening message to the client
-	string buffer = "Welcome to the stock market query! Type 'help' for commands";
+	string buffer = "Welcome to the stock market query! Type 'help' for commands\nEnter a command: \0";
 	send(FD, buffer.c_str(), buffer.size() + 1, 0);
 	
-	for (char cStrBuffer[4096] = {1}; 1; )
+	for (char cStrBuffer[4096] = {1}; 1; send(FD, "Enter a command: ", 17, 0))
 	{
+
 		//Clear the buffer and read the input. Store the input
 		//into a string for ease of processing
 		memset(cStrBuffer, 0, 4096);
@@ -59,7 +60,7 @@ void communicate(int FD, int connection)
 			else if (query.find(" year") != query.npos && size - 5 == start)
 				strncpy(cStrBuffer, fetchData(cStrBuffer, 4).c_str(), 4096);
 			else if (query == "login")
-				cout << "Log In!\n";
+				clientAccount.loginAccount(FD);
 			else if(query == "register")
 				cout << "Register!\n";
 			else
