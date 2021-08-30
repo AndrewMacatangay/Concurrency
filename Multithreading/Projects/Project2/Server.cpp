@@ -71,12 +71,9 @@ void communicate(int FD, int connection)
 			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
 		
 		//Send the information to the client
-		//Remove the above strncpys above and cast below
 		strncpy(cStrBuffer, buffer.c_str(), 4096);
 		string fullMessage = string(cStrBuffer) + "\nEnter a command: ";
-		//strncpy(cStrBuffer, )
 		send(FD, fullMessage.c_str(), fullMessage.size(), 0);
-		//send(FD, "Enter a command: ", 17, 0);
 	}
 }
 

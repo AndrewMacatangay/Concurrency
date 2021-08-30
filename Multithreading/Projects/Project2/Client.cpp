@@ -22,15 +22,13 @@ int main()
 	{
 		//Store the input into cin and convert it to a string
 		//for processing
-		//cout << "Enter a command: ";
 		cin.getline(buffer, 4096);
 		string b2s(buffer);
 
-		//Move this to Server.cpp
 		//If an escape character or all characters are whitespace
 		//characters, the ticker is invalid
 		if (b2s.find(27) != b2s.npos || all_of(b2s.begin(), b2s.end(), [](char c){ return isspace(c); }))
-		{ cout << "Error: Invalid command\n\n"; continue; }
+		{ cout << "Error: Invalid command\n\nEnter a command: "; continue; }
 
 		//Now that the input is well-formatted, send it to the server
 		//for processing. Clear the buffer, wait until the server sends

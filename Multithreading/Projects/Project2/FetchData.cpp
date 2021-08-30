@@ -13,7 +13,7 @@ string fetchData(string ticker, int fetchType)
 {
 	//Catch any invalid queries here: ("tsla lksmd")
 	if (!fetchType && ticker.find(' ') != ticker.npos)
-		return "Error: Invalid Query";
+		return "Error: Invalid Query\n";
 
 	//Extract the ticker symbol from the rest of the query
 	ticker = ticker.substr(0, ticker.find(' '));
@@ -32,7 +32,7 @@ string fetchData(string ticker, int fetchType)
 	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	if (curl_easy_perform(curl))
-		return "Error: CURL Failed!";
+		return "Error: CURL Failed!\n";
 
 	//Create a new data object which will parse the JSON string
 	//based on the member function called
