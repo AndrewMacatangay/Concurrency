@@ -10,13 +10,12 @@ void communicate(int FD, int connection)
 {
 	//Make Account instance here, even if the client doesn't log in or register
 	Account clientAccount;
-	string response;
 	
 	//Send opening message to the client
 	string buffer = "Welcome to the stock market query! Type 'help' for commands\n\nEnter a command: ";
 	send(FD, buffer.c_str(), buffer.size(), 0);
 	
-	for (char cStrBuffer[4096] = {1}; 1; send(FD, "Enter a command: ", 17, 0))
+	for (char cStrBuffer[4096] = {1}; 1;)
 	{
 
 		//Clear the buffer and read the input. Store the input
@@ -39,8 +38,6 @@ void communicate(int FD, int connection)
 				 + padding + "<ticker> year\n"
 				 + padding + "login\n" 
 				 + padding + "register\n";
-				 
-			strncpy(cStrBuffer, buffer.c_str(), 4096);
 		}
 		//Fetch the data and store it into the buffer. If the
 		//ticker symbol is valid, print the information on the
@@ -52,32 +49,33 @@ void communicate(int FD, int connection)
 
 			//Check if commands are valid here. If they are, call fetchData()
 			if      (query.find(" today") != query.npos && size - 6 == start)
-				strncpy(cStrBuffer, fetchData(cStrBuffer, 1).c_str(), 4096);
+				buffer = fetchData(cStrBuffer, 1);
 			else if (query.find(" day averages") != query.npos && size - 13 == start)
-				strncpy(cStrBuffer, fetchData(cStrBuffer, 2).c_str(), 4096);
+				buffer = fetchData(cStrBuffer, 2);
 			else if (query.find(" volumes") != query.npos && size - 8 == start)
-				strncpy(cStrBuffer, fetchData(cStrBuffer, 3).c_str(), 4096);
+				buffer = fetchData(cStrBuffer, 3);
 			else if (query.find(" year") != query.npos && size - 5 == start)
-				strncpy(cStrBuffer, fetchData(cStrBuffer, 4).c_str(), 4096);
+				buffer = fetchData(cStrBuffer, 4);
 			else if (query == "login")
 				clientAccount.loginAccount(FD);
 			else if(query == "register")
 				cout << "Register!\n";
 			else
-				strncpy(cStrBuffer, fetchData(cStrBuffer, 0).c_str(), 4096);
+				buffer = fetchData(cStrBuffer, 0);
 
-			if (string(cStrBuffer).find("Error") == string::npos)
+			if (buffer.find("Error") == string::npos)
 				cout << "Client " << connection << ": " << query << "\n"
-				     << cStrBuffer << "\n\n";
+				     << buffer << "\n";
 		}
 		else
 			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
 		
 		//Send the information to the client
 		//Remove the above strncpys above and cast below
-		string fullMessage = cStrBuffer + "\nEnter a command: ";
+		strncpy(cStrBuffer, buffer.c_str(), 4096);
+		string fullMessage = string(cStrBuffer) + "\nEnter a command: ";
 		//strncpy(cStrBuffer, )
-		send(FD, fullMessage.c_str(), strlen(fullMessage), 0);
+		send(FD, fullMessage.c_str(), fullMessage.size(), 0);
 		//send(FD, "Enter a command: ", 17, 0);
 	}
 }

@@ -6,10 +6,9 @@ string Data::getAttribute(string attribute)
 	//Find the index where the attribute begins. If the
 	//attribute does not exist, return an error message
 	
-	//ISSUE HERE WITH .FIND() IF AN ATTRIBUTE IS A SUBSTRING TO ANOTHER ATTRIBUTE
 	attributeIndex = JSON.find(attribute);
 	if (attributeIndex == JSON.npos)
-		return "Error: Attribute Does Not Exist";
+		return "Error: Attribute Does Not Exist\n";
 	
 	//We want to slice the string from the beginning of the data
 	//to the end of the JSON string for now
@@ -70,7 +69,7 @@ Data::Data(string ticker, string curlBuffer) : ticker(ticker), JSON(curlBuffer)
 string Data::getBasicInformation()
 {
 	if (!isValidTicker)
-		return "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol\n";
 
 	string padding(ticker.size() + 2, ' ');
 	string name         = getAttribute("\"shortName\":");
@@ -88,7 +87,7 @@ string Data::getBasicInformation()
 string Data::getTodaysInformation()
 {
 	if (!isValidTicker)
-		return "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol\n";
 
 	string padding(ticker.size() + 2, ' ');
 	string marketPrice         = formatNumber(getAttribute("\"regularMarketPrice\":"));
@@ -117,7 +116,7 @@ string Data::getTodaysInformation()
 string Data::getDayAverages()
 {	
 	if (!isValidTicker)
-		return "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol\n";
 
 	string padding(ticker.size() + 2, ' ');
 	string marketPrice = formatNumber(getAttribute("\"regularMarketPrice\":"));
@@ -145,7 +144,7 @@ string Data::getDayAverages()
 string Data::getVolumes()
 {
 	if (!isValidTicker)
-		return "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol\n";
 	
 	string padding(ticker.size() + 2, ' ');
 	string marketPrice        = formatNumber(getAttribute("\"regularMarketPrice\":"));
@@ -163,7 +162,7 @@ string Data::getVolumes()
 string Data::getYear()
 {
 	if (!isValidTicker)
-		return "Error: Invalid Ticker Symbol";
+		return "Error: Invalid Ticker Symbol\n";
 
 	string padding(ticker.size() + 2, ' ');
 	string marketPrice           = formatNumber(getAttribute("\"regularMarketPrice\":"));
