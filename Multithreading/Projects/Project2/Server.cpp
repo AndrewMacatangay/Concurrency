@@ -13,9 +13,8 @@ void communicate(int FD, int connection)
 	string response;
 	
 	//Send opening message to the client
-	string buffer = "Welcome to the stock market query! Type 'help' for commands\nEnter a command: ";
-	cout << buffer;
-	send(FD, buffer.c_str(), buffer.size() + 1, 0);
+	string buffer = "Welcome to the stock market query! Type 'help' for commands\n\nEnter a command: ";
+	send(FD, buffer.c_str(), buffer.size(), 0);
 	
 	for (char cStrBuffer[4096] = {1}; 1; send(FD, "Enter a command: ", 17, 0))
 	{
@@ -75,7 +74,11 @@ void communicate(int FD, int connection)
 			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
 		
 		//Send the information to the client
-		send(FD, cStrBuffer, strlen(cStrBuffer), 0);
+		//Remove the above strncpys above and cast below
+		string fullMessage = cStrBuffer + "\nEnter a command: ";
+		//strncpy(cStrBuffer, )
+		send(FD, fullMessage.c_str(), strlen(fullMessage), 0);
+		//send(FD, "Enter a command: ", 17, 0);
 	}
 }
 
