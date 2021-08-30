@@ -14,7 +14,7 @@ int main()
 	//Wait for the opening message, then print it
 	char buffer[4096] = {1};
 	read(clientSocket, buffer, 4096);
-	cout << buffer << endl << endl;
+	cout << buffer;
 	
 	//Ask the user to enter a ticker symbol and wait for a response from
 	//the server if the input was valid. Do this indefinitely

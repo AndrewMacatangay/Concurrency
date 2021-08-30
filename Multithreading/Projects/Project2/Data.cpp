@@ -81,7 +81,7 @@ string Data::getBasicInformation()
 
 	return ticker + ": " + name + " (" + exchangeName + "): $" + marketPrice + "\n"
 		      + padding + "Market Cap: $" + marketCap
-		      + (isCrypto ? "\n" + padding + "Circulating Supply: " + coinSupply : "");
+		      + (isCrypto ? "\n" + padding + "Circulating Supply: " + coinSupply : "") + "\n";
 }
 
 //Executed when "today" is included in the query
@@ -110,7 +110,7 @@ string Data::getTodaysInformation()
 		      + padding + "Change:     (" + marketChange + ", " + marketChangePercent + "%)\n"
 		      + padding + "Range:      [$" + marketLow + ", $" + marketHigh + "]\n"
 		      + padding + "Close/Open: {$" + marketClose + ", $" + marketOpen + "}"
-		      + (!isCrypto ? "\n" + padding + "Bid/Ask:    <$" + bid + ", $" + ask + ">" : "");
+		      + (!isCrypto ? "\n" + padding + "Bid/Ask:    <$" + bid + ", $" + ask + ">" : "") + "\n";
 }
 
 //Executed when "day averages" is included in the query
@@ -138,7 +138,7 @@ string Data::getDayAverages()
 
 	return ticker + ": $" + marketPrice + "\n"
 	              + padding + "50 Day:  $" + FDA + " (" + FDAC + ", " + FDACP + "%)\n"
-		      + padding + "200 Day: $" + THDA + " (" + THDAC + ", " + THDACP + "%)";
+		      + padding + "200 Day: $" + THDA + " (" + THDAC + ", " + THDACP + "%)\n";
 }
 
 //Executed when "volumes" is included in the query
@@ -156,7 +156,7 @@ string Data::getVolumes()
 	return ticker + ": $" + marketPrice + "\n"
 	              + padding + "Today's Volume:        " + marketVolume + "\n"
 		      + padding + "Average Daily 3 Month: " + averageDaily3Month + "\n"
-		      + padding + "Average Daily 10 Day:  " + averageDaily10Day;
+		      + padding + "Average Daily 10 Day:  " + averageDaily10Day + "\n";
 }
 
 //Executed when "year" is included in the query
@@ -185,10 +185,10 @@ string Data::getYear()
 	return ticker + ": $" + marketPrice + "\n"
 		      + padding + "Fifty-Two Week Range:       [$" + yearLow + ", $" + yearHigh + "]\n"
 		      + padding + "Fifty-Two Week Low Change:  (" + yearLowChange + ", " + yearLowChangePercent + "%)\n"
-		      + padding + "Fifty-Two Week High Change: (" + yearHighChange + ", " + yearHighChangePercent + "%)";
+		      + padding + "Fifty-Two Week High Change: (" + yearHighChange + ", " + yearHighChangePercent + "%)\n";
 }
 
 string Data::getPrice()
 {
-	return ticker + ": " + getAttribute("regularMarketPrice");
+	return ticker + ": " + getAttribute("regularMarketPrice") + "\n";
 }
