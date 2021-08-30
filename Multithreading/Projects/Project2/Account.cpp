@@ -2,7 +2,7 @@
 
 Account::Account() : isLoggedIn(0) { }
 
-bool Account::loginAccount(int FD)
+string Account::loginAccount(int FD)
 {
 	string buffer;
 	
@@ -46,24 +46,73 @@ bool Account::loginAccount(int FD)
 
 			if(password1 == buffer)
 			{
-				cout << "Logged in!\n" << endl;
+				//cout << "Logged in!\n" << endl;
 				isLoggedIn = 1;
 				username = username1;
 				password = password1;
-				return 1;
+				return "Logged in!\n";
 			}
 			else
 			{
-				cout << "Wrong password!\n";
+				return "Wrong password!\n";
 			}
 		}
 	}
 
-	cout << "Username does not exist!" << endl;
-	return 0;
+	return "Username does not exist!\n";
 }
 
-bool Account::registerAccount()
+string Account::registerAccount(int FD)
 {
-	return 1;
+	string buffer;
+	
+	fstream accounts;
+	accounts.open("Usernames.csv", fstream::app);
+	accounts.close();
+
+	accounts.open("Usernames.csv", fstream::in | fstream::out);
+
+	if (!getline(accounts, buffer))
+	{
+		accounts.clear();
+		accounts.seekg(0);
+		accounts << 0 << "\n";
+		accounts.seekg(0);
+		getline(accounts, buffer);
+	}
+
+	unsigned int numberOfEntries = stoi(buffer);
+
+	string username1, password1;
+	char cStrBuffer[4096];
+	//cout << "Enter username: ";
+	send(FD, "Enter username: ", 17, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	//cin >> username;
+	username1 = cStrBuffer;
+	cout << "Test: " << username1 << endl;
+
+	for(int x = numberOfEntries; x; x--)
+	{
+		string temp;
+		getline(accounts, temp, ',');
+		getline(accounts, buffer);
+		
+		if(temp == username1)
+			return "Username already exists!\n";
+	}
+
+	send(FD, "Enter password: ", 17, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	password1 = cStrBuffer;
+	cout << username1 << "," << password1 << endl;
+	accounts << username1 << "," << password1 << "\n";
+	accounts.clear();
+	accounts.seekg(0);
+	accounts << numberOfEntries + 1 << "\n";
+	accounts.close();
+
+	return "Account created!\n";
 }

@@ -57,9 +57,12 @@ void communicate(int FD, int connection)
 			else if (query.find(" year") != query.npos && size - 5 == start)
 				buffer = fetchData(cStrBuffer, 4);
 			else if (query == "login")
-				clientAccount.loginAccount(FD);
+				{
+					buffer = clientAccount.loginAccount(FD);
+					//buffer = "Still working on login\n";
+				}
 			else if(query == "register")
-				cout << "Register!\n";
+				buffer = clientAccount.registerAccount(FD);
 			else
 				buffer = fetchData(cStrBuffer, 0);
 

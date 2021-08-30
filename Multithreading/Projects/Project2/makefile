@@ -1,6 +1,6 @@
 all: Client Server
 
-Server: Server.cpp Data.cpp FetchData.cpp Data.h Account.h Libraries.h
+Server: Server.cpp Data.cpp Account.cpp FetchData.cpp Data.h Account.h Libraries.h
 	g++ -g -Wall Server.cpp FetchData.cpp Data.cpp Account.cpp -o Server -pthread -lcurl
 
 runServer: Server
