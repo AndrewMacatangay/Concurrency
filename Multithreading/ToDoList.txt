@@ -1,3 +1,5 @@
+8/30/2021 - Clean up Account.cpp
+	    Work on merging the creation of individual user files
 8/28/2021 - Create user list with new merged files
 8/26/2021 - Merge Login.cpp into Server.cpp
 8/23/2021 - Add data to individual CSV files
