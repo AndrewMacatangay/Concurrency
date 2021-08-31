@@ -57,9 +57,10 @@ string Account::registerAccount(int FD)
 
 string Account::loginAccount(int FD)
 {
-	string buffer;
-	
+	string buffer, uBuffer, pBuffer;
+	char cStrBuffer[4096];
 	fstream accounts;
+
 	accounts.open("Usernames.csv", fstream::app);
 	accounts.close();
 
@@ -76,12 +77,10 @@ string Account::loginAccount(int FD)
 
 	unsigned int numberOfEntries = stoi(buffer);
 
-	string username1, password1;
-	char cStrBuffer[4096];
 	send(FD, "Enter username: ", 17, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
-	username1 = cStrBuffer;
+	uBuffer = cStrBuffer;
 
 	for(int x = numberOfEntries; x; x--)
 	{
@@ -89,17 +88,17 @@ string Account::loginAccount(int FD)
 		getline(accounts, temp, ',');
 		getline(accounts, buffer);
 		
-		if(temp == username1)
+		if(temp == uBuffer)
 		{
 			send(FD, "Enter password: ", 17, 0);
 			memset(cStrBuffer, 0, 4096);
 			read(FD, cStrBuffer, 4096);
-			password1 = cStrBuffer;
-			if(password1 == buffer)
+			pBuffer = cStrBuffer;
+			if(pBuffer == buffer)
 			{
 				isLoggedIn = 1;
-				username = username1;
-				password = password1;
+				username = uBuffer;
+				password = pBuffer;
 				return "Logged in!\n";
 			}
 			else
