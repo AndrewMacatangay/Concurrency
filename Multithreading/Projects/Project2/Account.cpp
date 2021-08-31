@@ -41,12 +41,15 @@ string Account::loginAccount(int FD)
 		
 		if(temp == username1)
 		{
-			cout << "Enter password: ";
-			cin >> password1;
+			//cout << "Enter password: ";
+			//cin >> password1;
 
+			send(FD, "Enter password: ", 17, 0);
+			memset(cStrBuffer, 0, 4096);
+			read(FD, cStrBuffer, 4096);
+			password1 = cStrBuffer;
 			if(password1 == buffer)
 			{
-				//cout << "Logged in!\n" << endl;
 				isLoggedIn = 1;
 				username = username1;
 				password = password1;
@@ -85,13 +88,10 @@ string Account::registerAccount(int FD)
 
 	string username1, password1;
 	char cStrBuffer[4096];
-	//cout << "Enter username: ";
 	send(FD, "Enter username: ", 17, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
-	//cin >> username;
 	username1 = cStrBuffer;
-	cout << "Test: " << username1 << endl;
 
 	for(int x = numberOfEntries; x; x--)
 	{
@@ -107,7 +107,6 @@ string Account::registerAccount(int FD)
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
 	password1 = cStrBuffer;
-	cout << username1 << "," << password1 << endl;
 	accounts << username1 << "," << password1 << "\n";
 	accounts.clear();
 	accounts.seekg(0);
