@@ -11,8 +11,8 @@ class Account
 		bool isLoggedIn;
 	public:
 		Account();
-		string loginAccount(int FD);
 		string registerAccount(int FD);
+		string loginAccount(int FD);
 };
 
 #endif
