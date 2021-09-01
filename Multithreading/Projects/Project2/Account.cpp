@@ -2,12 +2,8 @@
 
 Account::Account() : isLoggedIn(0) { }
 
-string Account::registerAccount(int FD)
+void Account::createUsernamesCSV(fstream& accounts, string& buffer)
 {
-	string buffer, uBuffer, pBuffer;
-	char cStrBuffer[4096];
-	fstream accounts;
-
 	accounts.open("Usernames.csv", fstream::app);
 	accounts.close();
 	accounts.open("Usernames.csv", fstream::in | fstream::out);
@@ -19,8 +15,16 @@ string Account::registerAccount(int FD)
 		accounts << 0 << "\n";
 		accounts.seekg(0);
 		getline(accounts, buffer);
-	}
+	}	
+}
 
+string Account::registerAccount(int FD)
+{
+	string buffer, uBuffer, pBuffer;
+	char cStrBuffer[4096];
+	fstream accounts;
+
+	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
 	send(FD, "Enter username: ", 17, 0);
@@ -61,20 +65,7 @@ string Account::loginAccount(int FD)
 	char cStrBuffer[4096];
 	fstream accounts;
 
-	accounts.open("Usernames.csv", fstream::app);
-	accounts.close();
-
-	accounts.open("Usernames.csv", fstream::in | fstream::out);
-
-	if (!getline(accounts, buffer))
-	{
-		accounts.clear();
-		accounts.seekg(0);
-		accounts << 0 << "\n";
-		accounts.seekg(0);
-		getline(accounts, buffer);
-	}
-
+	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
 	send(FD, "Enter username: ", 17, 0);

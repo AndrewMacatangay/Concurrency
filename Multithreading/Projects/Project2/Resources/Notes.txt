@@ -16,3 +16,4 @@ Volume:
 Year:
 
 Compare or login
+Read and write functions?

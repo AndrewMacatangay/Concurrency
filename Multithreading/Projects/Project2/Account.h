@@ -9,6 +9,8 @@ class Account
 		double balance;
 		vector<pair<string, int>> portfolio;
 		bool isLoggedIn;
+		void createUsernamesCSV(fstream&, string&);
+
 	public:
 		Account();
 		string registerAccount(int FD);
