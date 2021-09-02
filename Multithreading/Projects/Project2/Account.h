@@ -15,6 +15,9 @@ class Account
 		Account();
 		string registerAccount(int FD);
 		string loginAccount(int FD);
+		string logoutAccount();
+		bool loggedIn();
+		string getUsername();
 };
 
 #endif

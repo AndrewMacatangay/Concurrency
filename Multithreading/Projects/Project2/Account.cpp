@@ -101,3 +101,19 @@ string Account::loginAccount(int FD)
 
 	return "Username does not exist!\n";
 }
+
+string Account::logoutAccount()
+{
+	username = password = balance = isLoggedIn = 0;
+	portfolio.clear();
+	return "Logged out!\n";
+}
+string Account::getUsername()
+{
+	return username;
+}
+
+bool Account::loggedIn()
+{
+	return isLoggedIn;
+}

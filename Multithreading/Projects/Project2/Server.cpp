@@ -37,7 +37,8 @@ void communicate(int FD, int connection)
 				 + padding + "<ticker> volumes\n"
 				 + padding + "<ticker> year\n"
 				 + padding + "login\n" 
-				 + padding + "register\n";
+				 + padding + "register\n"
+				 + padding + "logout\n";
 		}
 		//Fetch the data and store it into the buffer. If the
 		//ticker symbol is valid, print the information on the
@@ -57,18 +58,22 @@ void communicate(int FD, int connection)
 			else if (query.find(" year") != query.npos && size - 5 == start)
 				buffer = fetchData(cStrBuffer, 4);
 			else if (query == "login")
-				{
-					buffer = clientAccount.loginAccount(FD);
-					//buffer = "Still working on login\n";
-				}
-			else if(query == "register")
+				buffer = clientAccount.loginAccount(FD);
+			else if (query == "register")
 				buffer = clientAccount.registerAccount(FD);
+			else if (query == "logout")
+				buffer = clientAccount.logoutAccount();
 			else
 				buffer = fetchData(cStrBuffer, 0);
 
 			if (buffer.find("Error") == string::npos)
-				cout << "Client " << connection << ": " << query << "\n"
+			{
+				string username = "";
+				if (clientAccount.loggedIn())
+					username = " (" + clientAccount.getUsername() + ")";
+				cout << "Client " << connection << username << ": " << query << "\n"
 				     << buffer << "\n";
+			}
 		}
 		else
 			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
