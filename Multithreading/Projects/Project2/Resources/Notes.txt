@@ -18,3 +18,4 @@ Year:
 Compare or login
 Read and write functions?
 Add individual user file
+Add buy commands

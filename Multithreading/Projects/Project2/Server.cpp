@@ -38,7 +38,9 @@ void communicate(int FD, int connection)
 				 + padding + "<ticker> year\n"
 				 + padding + "login\n" 
 				 + padding + "register\n"
-				 + padding + "logout\n";
+				 + padding + "logout\n"
+				 + padding + "buy <ticker> <amount>\n"
+				 + padding + "sell <ticker> <amount>\n";
 		}
 		//Fetch the data and store it into the buffer. If the
 		//ticker symbol is valid, print the information on the
