@@ -55,7 +55,19 @@ string Account::registerAccount(int FD)
 
 	username = uBuffer;
 	password = pBuffer;
+	
+	fstream userFile;
+	
+	//Add the file if it doesn't exist and close it
+	userFile.open(".//UserData//" + username + ".csv", fstream::app);
+	userFile.close();
 
+	//Open the file for I/O
+	userFile.open(".//UserData//" + username + ".csv", fstream::in | fstream::out);
+	
+	userFile << 0 << "," << 25000.00 << endl;
+	userFile.close();
+	
 	return "Account created!\n";
 }
 
