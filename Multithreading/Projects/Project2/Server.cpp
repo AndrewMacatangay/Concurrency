@@ -17,6 +17,10 @@ void communicate(int FD, int connection)
 	
 	for (char cStrBuffer[4096] = {1}; 1;)
 	{
+		//Pre-load username
+		string username = "";
+		if (clientAccount.loggedIn())
+			username = " (" + clientAccount.getUsername() + ")";
 
 		//Clear the buffer and read the input. Store the input
 		//into a string for ease of processing
@@ -30,7 +34,7 @@ void communicate(int FD, int connection)
 		if (query == "help")
 		{
 			string padding(10, ' ');
-			cout << "Client " << connection << ": " << query << "\n\n";
+			cout << "Client " << connection << username << ": " << query << "\n\n";
 			buffer = "Commands: <ticker>\n"
 				 + padding + "<ticker> today\n"
 				 + padding + "<ticker> day averages\n"
@@ -70,9 +74,6 @@ void communicate(int FD, int connection)
 
 			if (buffer.find("Error") == string::npos)
 			{
-				string username = "";
-				if (clientAccount.loggedIn())
-					username = " (" + clientAccount.getUsername() + ")";
 				cout << "Client " << connection << username << ": " << query << "\n"
 				     << buffer << "\n";
 			}
