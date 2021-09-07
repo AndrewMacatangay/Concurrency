@@ -189,5 +189,5 @@ string Data::getYear()
 
 string Data::getPrice()
 {
-	return ticker + ": " + getAttribute("regularMarketPrice") + "\n";
+	return formatNumber(getAttribute("\"regularMarketPrice\":"));
 }

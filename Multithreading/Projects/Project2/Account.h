@@ -1,6 +1,8 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 #include "Libraries.h"
+#include "Data.h"
+string fetchData(string ticker, int fetchType);
 
 class Account
 {
@@ -16,6 +18,7 @@ class Account
 		string registerAccount(int FD);
 		string loginAccount(int FD);
 		string logoutAccount();
+		string buy(int FD);
 		bool loggedIn();
 		string getUsername();
 };

@@ -45,6 +45,7 @@ string fetchData(string ticker, int fetchType)
 	else if (fetchType == 2) returnBuffer = stockData.getDayAverages();
 	else if (fetchType == 3) returnBuffer = stockData.getVolumes();
 	else if (fetchType == 4) returnBuffer = stockData.getYear();
+	else if (fetchType == 5) returnBuffer = stockData.getPrice();
 
 	return returnBuffer;
 }

@@ -120,6 +120,27 @@ string Account::logoutAccount()
 	portfolio.clear();
 	return "Logged out!\n";
 }
+
+string Account::buy(int FD)
+{
+	if(!isLoggedIn)
+		return "Please log in first!\n";
+
+	string ticker, amount;
+	char cStrBuffer[4096];
+	send(FD, "Ticker: ", 9, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	ticker = cStrBuffer;
+	send(FD, "Amount: ", 9, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	amount = cStrBuffer;
+
+	string price = fetchData(ticker, 5);
+	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n";
+}
+
 string Account::getUsername()
 {
 	return username;
