@@ -1,3 +1,6 @@
+9/07/2021 - Add sell option
+	    Add functionality for buy/sell
+	    Make functions in Account.h for read/write
 8/30/2021 - Clean up Account.cpp
 	    Work on merging the creation of individual user files
 8/28/2021 - Create user list with new merged files
