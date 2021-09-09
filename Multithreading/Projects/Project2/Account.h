@@ -10,6 +10,7 @@ class Account
 		string username, password;
 		double balance;
 		vector<pair<string, int>> portfolio;
+		int portfolioSize;
 		bool isLoggedIn;
 		void createUsernamesCSV(fstream&, string&);
 

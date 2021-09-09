@@ -99,15 +99,21 @@ string Account::loginAccount(int FD)
 			pBuffer = cStrBuffer;
 			if(pBuffer == buffer)
 			{
+				//Load account details
 				isLoggedIn = 1;
 				username = uBuffer;
 				password = pBuffer;
+				fstream userFile(".//UserData//" + username + ".csv");
+				getline(userFile, buffer, ',');
+				portfolioSize = stoi(buffer);
+				getline(userFile, buffer, ',');
+				balance = stod(buffer);
+				//cout << portfolioSize << " " << balance << endl;
+				//Store rest of input into vector
 				return "Logged in!\n";
 			}
 			else
-			{
 				return "Wrong password!\n";
-			}
 		}
 	}
 
