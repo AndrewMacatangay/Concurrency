@@ -141,6 +141,26 @@ string Account::buy(int FD)
 	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n";
 }
 
+string Account::sell(int FD)
+{
+	if(!isLoggedIn)
+		return "Please log in first!\n";
+
+	string ticker, amount;
+	char cStrBuffer[4096];
+	send(FD, "Ticker: ", 9, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	ticker = cStrBuffer;
+	send(FD, "Amount: ", 9, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	amount = cStrBuffer;
+
+	string price = fetchData(ticker, 5);
+	return "Sold " + amount + " " + ticker + " at $" + price + " eacah!\n";
+}
+
 string Account::getUsername()
 {
 	return username;

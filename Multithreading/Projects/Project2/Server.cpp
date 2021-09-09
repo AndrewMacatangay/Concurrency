@@ -69,9 +69,10 @@ void communicate(int FD, int connection)
 				buffer = clientAccount.registerAccount(FD);
 			else if (query == "logout")
 				buffer = clientAccount.logoutAccount();
-			//Error checking for string later
 			else if (query == "buy")
 				buffer = clientAccount.buy(FD);
+			else if (query == "sell")
+				buffer = clientAccount.sell(FD);
 			else
 				buffer = fetchData(cStrBuffer, 0);
 

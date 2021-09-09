@@ -19,6 +19,7 @@ class Account
 		string loginAccount(int FD);
 		string logoutAccount();
 		string buy(int FD);
+		string sell(int FD);
 		bool loggedIn();
 		string getUsername();
 };
