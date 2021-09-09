@@ -1,4 +1,5 @@
-9/07/2021 - Add sell option
+9/9/2021  - Fill the rest of the account's member variables
+9/7/2021  - Add sell option
 	    Add functionality for buy/sell
 	    Make functions in Account.h for read/write
 8/30/2021 - Clean up Account.cpp
