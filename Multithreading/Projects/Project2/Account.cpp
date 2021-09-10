@@ -142,9 +142,16 @@ string Account::buy(int FD)
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
 	amount = cStrBuffer;
-
+	
 	string price = fetchData(ticker, 5);
-	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n";
+	string rawPrice = price;
+	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
+
+	if (balance < stod(rawPrice) * stoi(amount))
+		return "Not enough funds!\n";
+	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n" +
+	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
+	       "Balance: $" + to_string(balance) + "\n";
 }
 
 string Account::sell(int FD)
