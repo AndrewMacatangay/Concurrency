@@ -149,6 +149,15 @@ string Account::buy(int FD)
 
 	if (balance < stod(rawPrice) * stoi(amount))
 		return "Not enough funds!\n";
+
+	balance -= stod(rawPrice) * stoi(amount);
+
+	//Launch new thread to create a new file and update the old file
+	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
+
+	userFile << portfolio.size() << "," << balance << endl;
+	userFile.close();
+
 	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n" +
 	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
 	       "Balance: $" + to_string(balance) + "\n";
