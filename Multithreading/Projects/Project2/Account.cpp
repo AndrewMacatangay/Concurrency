@@ -180,6 +180,12 @@ string Account::sell(int FD)
 	amount = cStrBuffer;
 
 	string price = fetchData(ticker, 5);
+
+	//Maybe put the tickers into an unordered_map instead for O(1) access
+	//Check if you are trying to sell more stock than you have
+	//Add to balance
+	//Update the user file
+
 	return "Sold " + amount + " " + ticker + " at $" + price + " eacah!\n";
 }
 

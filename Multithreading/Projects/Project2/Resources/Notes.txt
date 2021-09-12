@@ -15,7 +15,5 @@ Volume:
 
 Year:
 
-Compare or login
-Read and write functions?
-Add individual user file
-Add buy commands
+Finish buy/sell. Use unordered_map instead of vector?
+
