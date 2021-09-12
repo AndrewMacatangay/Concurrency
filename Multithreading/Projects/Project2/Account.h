@@ -9,8 +9,7 @@ class Account
 	private:
 		string username, password;
 		double balance;
-		vector<pair<string, int>> portfolio;
-		int portfolioSize;
+		unordered_map<string, int> portfolio;
 		bool isLoggedIn;
 		void createUsernamesCSV(fstream&, string&);
 

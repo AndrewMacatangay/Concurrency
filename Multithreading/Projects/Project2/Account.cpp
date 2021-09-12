@@ -105,11 +105,9 @@ string Account::loginAccount(int FD)
 				password = pBuffer;
 				fstream userFile(".//UserData//" + username + ".csv");
 				getline(userFile, buffer, ',');
-				portfolioSize = stoi(buffer);
 				getline(userFile, buffer, ',');
 				balance = stod(buffer);
-				//cout << portfolioSize << " " << balance << endl;
-				//Store rest of input into vector
+				//Loop through file and store all stocks into the unordered map
 				return "Logged in!\n";
 			}
 			else
@@ -151,11 +149,18 @@ string Account::buy(int FD)
 		return "Not enough funds!\n";
 
 	balance -= stod(rawPrice) * stoi(amount);
+	portfolio[ticker] += stoi(amount);
+	for(pair<string, int> stock : portfolio)
+		cout << stock.first << " " << stock.second << endl;
 
 	//Launch new thread to create a new file and update the old file
 	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
 
 	userFile << portfolio.size() << "," << balance << endl;
+
+	for(pair<string, int> stock : portfolio)
+		userFile << stock.first << "," << stock.second << endl;
+
 	userFile.close();
 
 	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n" +
