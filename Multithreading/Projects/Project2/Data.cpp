@@ -189,5 +189,8 @@ string Data::getYear()
 
 string Data::getPrice()
 {
+	if (!isValidTicker)
+		return "Error: Invalid Ticker Symbol\n";
+
 	return formatNumber(getAttribute("\"regularMarketPrice\":"));
 }

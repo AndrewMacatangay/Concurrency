@@ -9,7 +9,7 @@ class Account
 	private:
 		string username, password;
 		double balance;
-		unordered_map<string, int> portfolio;
+		map<string, int> portfolio;
 		bool isLoggedIn;
 		void createUsernamesCSV(fstream&, string&);
 

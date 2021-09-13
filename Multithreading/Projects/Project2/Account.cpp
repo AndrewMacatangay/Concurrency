@@ -103,11 +103,15 @@ string Account::loginAccount(int FD)
 				isLoggedIn = 1;
 				username = uBuffer;
 				password = pBuffer;
+
 				fstream userFile(".//UserData//" + username + ".csv");
 				getline(userFile, buffer, ',');
-				getline(userFile, buffer, ',');
+				getline(userFile, buffer);
 				balance = stod(buffer);
-				//Loop through file and store all stocks into the unordered map
+
+				for(string value; getline(userFile, buffer, ','); portfolio[buffer] = stoi(value))
+					getline(userFile, value);
+
 				return "Logged in!\n";
 			}
 			else
@@ -132,16 +136,22 @@ string Account::buy(int FD)
 
 	string ticker, amount;
 	char cStrBuffer[4096];
+
 	send(FD, "Ticker: ", 9, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
 	ticker = cStrBuffer;
+
 	send(FD, "Amount: ", 9, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
 	amount = cStrBuffer;
 	
+	//Check if NaN or negative amount
+
 	string price = fetchData(ticker, 5);
+	if (price.find("Error") != string::npos)
+		return price;
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
@@ -149,7 +159,10 @@ string Account::buy(int FD)
 		return "Not enough funds!\n";
 
 	balance -= stod(rawPrice) * stoi(amount);
+	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+
 	portfolio[ticker] += stoi(amount);
+
 	for(pair<string, int> stock : portfolio)
 		cout << stock.first << " " << stock.second << endl;
 
@@ -175,10 +188,12 @@ string Account::sell(int FD)
 
 	string ticker, amount;
 	char cStrBuffer[4096];
+
 	send(FD, "Ticker: ", 9, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
 	ticker = cStrBuffer;
+
 	send(FD, "Amount: ", 9, 0);
 	memset(cStrBuffer, 0, 4096);
 	read(FD, cStrBuffer, 4096);
