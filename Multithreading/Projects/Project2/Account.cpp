@@ -148,6 +148,8 @@ string Account::buy(int FD)
 	amount = cStrBuffer;
 	
 	//Check if NaN or negative amount
+	if (stoi(amount) <= 0)
+		return "Invalid amount entered!\n";
 
 	string price = fetchData(ticker, 5);
 	if (price.find("Error") != string::npos)
@@ -162,9 +164,6 @@ string Account::buy(int FD)
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 
 	portfolio[ticker] += stoi(amount);
-
-	for(pair<string, int> stock : portfolio)
-		cout << stock.first << " " << stock.second << endl;
 
 	//Launch new thread to create a new file and update the old file
 	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
@@ -200,13 +199,33 @@ string Account::sell(int FD)
 	amount = cStrBuffer;
 
 	string price = fetchData(ticker, 5);
+	if(price.find("Error") != string::npos)
+		return price;
+	string rawPrice = price;
+	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
-	//Maybe put the tickers into an unordered_map instead for O(1) access
-	//Check if you are trying to sell more stock than you have
-	//Add to balance
-	//Update the user file
+transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+	if (stoi(amount) > portfolio[ticker])
+		return "You do not own enough stock!\n";
+	
+	balance += stod(rawPrice) * stoi(amount);
 
-	return "Sold " + amount + " " + ticker + " at $" + price + " eacah!\n";
+	portfolio[ticker] -= stoi(amount);
+	
+	if(portfolio[ticker] == 0)
+		portfolio.erase(ticker);
+
+	//Launch new thread to create a new file and update the old file
+	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
+
+	userFile << portfolio.size() << "," << balance << endl;
+
+	for(pair<string, int> stock : portfolio)
+		userFile << stock.first << "," << stock.second << endl;
+
+	userFile.close();
+
+	return "Sold " + amount + " " + ticker + " at $" + price + " each!\n";
 }
 
 string Account::getUsername()
