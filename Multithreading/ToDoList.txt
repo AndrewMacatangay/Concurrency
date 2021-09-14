@@ -1,24 +1,24 @@
 9/13/2021 - Do error checking for buy command
-			Fix any unintended changes to setting tab to 4 space
+	    Fix any unintended changes to setting tab to 4 space
 9/9/2021  - Fill the rest of the account's member variables
 9/7/2021  - Add sell option
-	    	Add functionality for buy/sell
-	    	Make functions in Account.h for read/write
+	    Add functionality for buy/sell
+	    Make functions in Account.h for read/write
 8/30/2021 - Clean up Account.cpp
-	    	Work on merging the creation of individual user files
+	    Work on merging the creation of individual user files
 8/28/2021 - Create user list with new merged files
 8/26/2021 - Merge Login.cpp into Server.cpp
 8/23/2021 - Add data to individual CSV files
 8/16/2021 - Revise "day averages" command or getAttributes() to fix substring bug
 8/15/2021 - Split Data.h to Data.h and Data.cpp
-	    	Fix multi-commands bug
-	    	Create login capabilities
+	    Fix multi-commands bug
+	    Create login capabilities
 8/12/2021 - Fix comments, reformat, and keep adding commands
 8/10/2021 - Start adding commands so that the client can get specific data
 8/7/2021  - Add more information on server side that the client can access
-	    	Possibly add commands to view a specific attribute
+	    Possibly add commands to view a specific attribute
 8/5/2021  - Account for ticker symbols that do not exist
-	    	Move code from the scraper to the server
+	    Move code from the scraper to the server
 8/3/2021  - Create class for client/thread for RAII
             Fix potential bugs on input and find a way to scrape data
 8/2/2021  - Create support for multiple clients and plan out multithreaded commands
@@ -27,22 +27,22 @@
 7/26/2021 - Finish reading the rest of the chapter
 7/15/2021 - Read about acquire-release and make second example if necessary
 7/13/2021 - Continue reading about memory ordering
-	    	Create new .cpp files if necessary. If not, make changes according to the reading
+	    Create new .cpp files if necessary. If not, make changes according to the reading
 7/11/2021 - Read section 5.3
 7/6/2021  - Start and finish AtomicBool.cpp and start reading section 5.2.4
-	    	Go back to section 5.2.3 and implement a compare_exchange example
+	    Go back to section 5.2.3 and implement a compare_exchange example
 7/5/2021  - Make diagram for AcquireRelease.cpp
 7/1/2021  - Continue reading on memory models and make simple examples
-	    	Start reading chapter 5
+	    Start reading chapter 5
 6/25/2021 - Finish up concurrent BST program
-	    	Get familiar with optimization techniques
+	    Get familiar with optimization techniques
 6/18/2021 - Create parts of binary search tree class with concurrent operations
-	    	Brainstorm idea for a project on everything learned so far
+	    Brainstorm idea for a project on everything learned so far
 6/15/2021 - Finish reading chapter 4
-	    	Start examples for chrono library
+	    Start examples for chrono library
 6/13/2021 - Read more about clocks and the chrono library
 6/12/2021 - Think of a project to implement after finishing Chapter 4
-	    	Read the rest of section 4.2 and watch video for time libraries
+	    Read the rest of section 4.2 and watch video for time libraries
 6/11/2021 - Finish the rest of the packaged_task example
 6/9/2021  - Add sleeps to Promise.cpp
 6/8/2021  - Read about callable objects and packaged_task
@@ -53,7 +53,7 @@
 6/3/2021  - Watch video on unique_lock and lazy initialization
 5/29/2021 - Finish reading about deadlocks. Implement code if needed
 5/28/2021 - Read into deadlocks and think of a useful project you can create
-	    	Add example where you pass a function as a parameter to another function
+	    Add example where you pass a function as a parameter to another function
 5/27/2021 - Change Rumor.cpp to Protect.cpp to demonstate protecting shared data
             Review SimpleMutex.cpp for race conditions
 5/25/2021 - Start chapter 3 and thnk of program that can demonstrate mutexes
