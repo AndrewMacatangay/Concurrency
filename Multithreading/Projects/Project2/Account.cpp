@@ -18,6 +18,27 @@ void Account::createUsernamesCSV(fstream& accounts, string& buffer)
 	}	
 }
 
+char* Account::communicateWithClient(string message, char* cStrBuffer, int FD)
+{
+	send(FD, message.c_str(), message.size() + 1, 0);
+	memset(cStrBuffer, 0, 4096);
+	read(FD, cStrBuffer, 4096);
+	return cStrBuffer;
+}
+
+void Account::updateUserFile()
+{
+	//Launch new thread to create a new file and update the old file
+	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
+
+	userFile << portfolio.size() << "," << balance << endl;
+
+	for(pair<string, int> stock : portfolio)
+		userFile << stock.first << "," << stock.second << endl;
+
+	userFile.close();
+}
+
 string Account::registerAccount(int FD)
 {
 	string buffer, uBuffer, pBuffer;
@@ -27,10 +48,7 @@ string Account::registerAccount(int FD)
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
-	send(FD, "Enter username: ", 17, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	uBuffer = cStrBuffer;
+	uBuffer = communicateWithClient("Enter username: ", cStrBuffer, FD);
 
 	for(int x = numberOfEntries; x; x--)
 	{
@@ -42,10 +60,7 @@ string Account::registerAccount(int FD)
 		getline(accounts, buffer);
 	}
 
-	send(FD, "Enter password: ", 17, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	pBuffer = cStrBuffer;
+	pBuffer = communicateWithClient("Enter password: ", cStrBuffer, FD);
 
 	accounts << uBuffer << "," << pBuffer << "\n";
 	accounts.clear();
@@ -80,10 +95,7 @@ string Account::loginAccount(int FD)
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
-	send(FD, "Enter username: ", 17, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	uBuffer = cStrBuffer;
+	uBuffer = communicateWithClient("Enter username: ", cStrBuffer, FD);
 
 	for(int x = numberOfEntries; x; x--)
 	{
@@ -93,10 +105,7 @@ string Account::loginAccount(int FD)
 		
 		if(temp == uBuffer)
 		{
-			send(FD, "Enter password: ", 17, 0);
-			memset(cStrBuffer, 0, 4096);
-			read(FD, cStrBuffer, 4096);
-			pBuffer = cStrBuffer;
+			pBuffer = communicateWithClient("Enter password: ", cStrBuffer, FD);
 			if(pBuffer == buffer)
 			{
 				//Load account details
@@ -137,15 +146,9 @@ string Account::buy(int FD)
 	string ticker, amount;
 	char cStrBuffer[4096];
 
-	send(FD, "Ticker: ", 9, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	ticker = cStrBuffer;
-
-	send(FD, "Amount: ", 9, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	amount = cStrBuffer;
+	ticker = communicateWithClient("Ticker: ", cStrBuffer, FD);
+	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+	amount = communicateWithClient("Amount: ", cStrBuffer, FD);
 	
 	//Check if NaN or negative amount
 	if (stoi(amount) <= 0)
@@ -161,19 +164,10 @@ string Account::buy(int FD)
 		return "Not enough funds!\n";
 
 	balance -= stod(rawPrice) * stoi(amount);
-	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 
 	portfolio[ticker] += stoi(amount);
 
-	//Launch new thread to create a new file and update the old file
-	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
-
-	userFile << portfolio.size() << "," << balance << endl;
-
-	for(pair<string, int> stock : portfolio)
-		userFile << stock.first << "," << stock.second << endl;
-
-	userFile.close();
+	updateUserFile();
 
 	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n" +
 	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
@@ -188,15 +182,9 @@ string Account::sell(int FD)
 	string ticker, amount;
 	char cStrBuffer[4096];
 
-	send(FD, "Ticker: ", 9, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	ticker = cStrBuffer;
-
-	send(FD, "Amount: ", 9, 0);
-	memset(cStrBuffer, 0, 4096);
-	read(FD, cStrBuffer, 4096);
-	amount = cStrBuffer;
+	ticker = communicateWithClient("Ticker: ", cStrBuffer, FD);
+	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
+	amount = communicateWithClient("Amount: ", cStrBuffer, FD);
 
 	string price = fetchData(ticker, 5);
 	if(price.find("Error") != string::npos)
@@ -204,7 +192,6 @@ string Account::sell(int FD)
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
-transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 	if (stoi(amount) > portfolio[ticker])
 		return "You do not own enough stock!\n";
 	
@@ -215,17 +202,11 @@ transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
 	if(portfolio[ticker] == 0)
 		portfolio.erase(ticker);
 
-	//Launch new thread to create a new file and update the old file
-	fstream userFile(".//UserData//" + username + ".csv", fstream::trunc | fstream::out);
+	updateUserFile();
 
-	userFile << portfolio.size() << "," << balance << endl;
-
-	for(pair<string, int> stock : portfolio)
-		userFile << stock.first << "," << stock.second << endl;
-
-	userFile.close();
-
-	return "Sold " + amount + " " + ticker + " at $" + price + " each!\n";
+	return "Sold " + amount + " " + ticker + " at $" + price + " each!\n" + 
+		   "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
+		   "Balance: $" + to_string(balance) + "\n";
 }
 
 string Account::getUsername()
