@@ -1,3 +1,4 @@
+9/14/2021 - Format and do error checking for Account.cpp
 9/13/2021 - Do error checking for buy command
 	    Fix any unintended changes to setting tab to 4 space
 9/9/2021  - Fill the rest of the account's member variables
