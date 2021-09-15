@@ -2,6 +2,8 @@
 
 Account::Account() : isLoggedIn(0) { }
 
+//Create the CSV files containing the usernames, and print out 0
+//indicating the number of usernames in the file
 void Account::createUsernamesCSV(fstream& accounts, string& buffer)
 {
 	accounts.open("Usernames.csv", fstream::app);
@@ -15,10 +17,12 @@ void Account::createUsernamesCSV(fstream& accounts, string& buffer)
 		accounts << 0 << "\n";
 		accounts.seekg(0);
 		getline(accounts, buffer);
-	}	
+	}
 }
 
-char* Account::communicateWithClient(string message, char* cStrBuffer, int FD)
+//And a message to the client with the given file descriptor and
+//wait for the response
+char* Account::communicateWithClient(string message, int FD)
 {
 	send(FD, message.c_str(), message.size() + 1, 0);
 	memset(cStrBuffer, 0, 4096);
@@ -39,16 +43,16 @@ void Account::updateUserFile()
 	userFile.close();
 }
 
+//Create a new account
 string Account::registerAccount(int FD)
 {
 	string buffer, uBuffer, pBuffer;
-	char cStrBuffer[4096];
 	fstream accounts;
 
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
-	uBuffer = communicateWithClient("Enter username: ", cStrBuffer, FD);
+	uBuffer = communicateWithClient("Enter username: ", FD);
 
 	for(int x = numberOfEntries; x; x--)
 	{
@@ -60,7 +64,7 @@ string Account::registerAccount(int FD)
 		getline(accounts, buffer);
 	}
 
-	pBuffer = communicateWithClient("Enter password: ", cStrBuffer, FD);
+	pBuffer = communicateWithClient("Enter password: ", FD);
 
 	accounts << uBuffer << "," << pBuffer << "\n";
 	accounts.clear();
@@ -89,23 +93,22 @@ string Account::registerAccount(int FD)
 string Account::loginAccount(int FD)
 {
 	string buffer, uBuffer, pBuffer;
-	char cStrBuffer[4096];
 	fstream accounts;
 
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
-	uBuffer = communicateWithClient("Enter username: ", cStrBuffer, FD);
+	uBuffer = communicateWithClient("Enter username: ", FD);
 
 	for(int x = numberOfEntries; x; x--)
 	{
 		string temp;
 		getline(accounts, temp, ',');
 		getline(accounts, buffer);
-		
+		cout << uBuffer << endl;		
 		if(temp == uBuffer)
 		{
-			pBuffer = communicateWithClient("Enter password: ", cStrBuffer, FD);
+			pBuffer = communicateWithClient("Enter password: ", FD);
 			if(pBuffer == buffer)
 			{
 				//Load account details
@@ -144,11 +147,10 @@ string Account::buy(int FD)
 		return "Please log in first!\n";
 
 	string ticker, amount;
-	char cStrBuffer[4096];
 
-	ticker = communicateWithClient("Ticker: ", cStrBuffer, FD);
+	ticker = communicateWithClient("Ticker: ", FD);
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
-	amount = communicateWithClient("Amount: ", cStrBuffer, FD);
+	amount = communicateWithClient("Amount: ", FD);
 	
 	//Check if NaN or negative amount
 	if (stoi(amount) <= 0)
@@ -157,6 +159,7 @@ string Account::buy(int FD)
 	string price = fetchData(ticker, 5);
 	if (price.find("Error") != string::npos)
 		return price;
+
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
@@ -180,15 +183,15 @@ string Account::sell(int FD)
 		return "Please log in first!\n";
 
 	string ticker, amount;
-	char cStrBuffer[4096];
 
-	ticker = communicateWithClient("Ticker: ", cStrBuffer, FD);
+	ticker = communicateWithClient("Ticker: ", FD);
 	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
-	amount = communicateWithClient("Amount: ", cStrBuffer, FD);
+	amount = communicateWithClient("Amount: ", FD);
 
 	string price = fetchData(ticker, 5);
 	if(price.find("Error") != string::npos)
 		return price;
+
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
@@ -205,8 +208,8 @@ string Account::sell(int FD)
 	updateUserFile();
 
 	return "Sold " + amount + " " + ticker + " at $" + price + " each!\n" + 
-		   "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
-		   "Balance: $" + to_string(balance) + "\n";
+	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
+	       "Balance: $" + to_string(balance) + "\n";
 }
 
 string Account::getUsername()

@@ -12,8 +12,9 @@ class Account
 		map<string, int> portfolio;
 		bool isLoggedIn;
 		void createUsernamesCSV(fstream&, string&);
-		char* communicateWithClient(string message, char* cStrBuffer, int FD);
+		char* communicateWithClient(string message, int FD);
 		void updateUserFile();
+		char cStrBuffer[4096];
 
 	public:
 		Account();
