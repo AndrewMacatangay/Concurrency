@@ -23,6 +23,7 @@ class Account
 		string logoutAccount();
 		string buy(int FD);
 		string sell(int FD);
+		string transaction(int FD, int transactionType);
 		bool loggedIn();
 		string getUsername();
 };

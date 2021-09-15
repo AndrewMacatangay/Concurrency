@@ -134,14 +134,7 @@ string Account::loginAccount(int FD)
 	return "Username does not exist!\n";
 }
 
-string Account::logoutAccount()
-{
-	username = password = balance = isLoggedIn = 0;
-	portfolio.clear();
-	return "Logged out!\n";
-}
-
-string Account::buy(int FD)
+string Account::transaction(int FD, int transactionType)
 {
 	if(!isLoggedIn)
 		return "Please log in first!\n";
@@ -163,53 +156,31 @@ string Account::buy(int FD)
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
-	if (balance < stod(rawPrice) * stoi(amount))
+	if (transactionType && balance < stod(rawPrice) * stoi(amount))
 		return "Not enough funds!\n";
-
-	balance -= stod(rawPrice) * stoi(amount);
-
-	portfolio[ticker] += stoi(amount);
-
-	updateUserFile();
-
-	return "Bought " + amount + " " + ticker + " at $" + price + " each!\n" +
-	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
-	       "Balance: $" + to_string(balance) + "\n";
-}
-
-string Account::sell(int FD)
-{
-	if(!isLoggedIn)
-		return "Please log in first!\n";
-
-	string ticker, amount;
-
-	ticker = communicateWithClient("Ticker: ", FD);
-	transform(ticker.begin(), ticker.end(), ticker.begin(), ::toupper);
-	amount = communicateWithClient("Amount: ", FD);
-
-	string price = fetchData(ticker, 5);
-	if(price.find("Error") != string::npos)
-		return price;
-
-	string rawPrice = price;
-	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
-
-	if (stoi(amount) > portfolio[ticker])
+	else if(!transactionType && stoi(amount) > portfolio[ticker])
 		return "You do not own enough stock!\n";
-	
-	balance += stod(rawPrice) * stoi(amount);
 
-	portfolio[ticker] -= stoi(amount);
+	double cost = stod(rawPrice) * stoi(amount);
+	balance += transactionType ? -cost : cost;
+
+	portfolio[ticker] += transactionType ? stoi(amount) : -stoi(amount);
 	
-	if(portfolio[ticker] == 0)
+	if(!portfolio[ticker])
 		portfolio.erase(ticker);
 
 	updateUserFile();
 
-	return "Sold " + amount + " " + ticker + " at $" + price + " each!\n" + 
+	return (transactionType ? "Bought " : "Sold ") + amount + " " + ticker + " at $" + price + " each!\n" +
 	       "Total: $" + to_string(stod(rawPrice) * stoi(amount)) + "\n" +
-	       "Balance: $" + to_string(balance) + "\n";
+	       "Balance: $" + to_string(balance) + "\n";	
+}
+
+string Account::logoutAccount()
+{
+	username = password = balance = isLoggedIn = 0;
+	portfolio.clear();
+	return "Logged out!\n";
 }
 
 string Account::getUsername()

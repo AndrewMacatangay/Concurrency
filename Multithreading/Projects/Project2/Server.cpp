@@ -70,9 +70,9 @@ void communicate(int FD, int connection)
 			else if (query == "logout")
 				buffer = clientAccount.logoutAccount();
 			else if (query == "buy")
-				buffer = clientAccount.buy(FD);
+				buffer = clientAccount.transaction(FD, 1);
 			else if (query == "sell")
-				buffer = clientAccount.sell(FD);
+				buffer = clientAccount.transaction(FD, 0);
 			else
 				buffer = fetchData(cStrBuffer, 0);
 
