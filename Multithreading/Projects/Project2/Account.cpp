@@ -30,6 +30,8 @@ char* Account::communicateWithClient(string message, int FD)
 	return cStrBuffer;
 }
 
+//Once a buy or sell transaction is made, we must update the user's
+//file immediately so no data is lost
 void Account::updateUserFile()
 {
 	//Launch new thread to create a new file and update the old file
@@ -49,69 +51,77 @@ string Account::registerAccount(int FD)
 	string buffer, uBuffer, pBuffer;
 	fstream accounts;
 
+	//Create a new Usernames CSV if one does not exist
+	//It will act as the root database for all user actions
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
 	uBuffer = communicateWithClient("Enter username: ", FD);
 
+	//Loop through all the usernames to see if it exists
 	for(int x = numberOfEntries; x; x--)
 	{
+		//Get the username
 		getline(accounts, buffer, ',');
-	
+
 		if(buffer == uBuffer)
 			return "Username already exists!\n";
-		
+
+		//Get the password, but don't do anything with it
 		getline(accounts, buffer);
 	}
 
 	pBuffer = communicateWithClient("Enter password: ", FD);
 
+	//Update the number of people in the Username CSV file
 	accounts << uBuffer << "," << pBuffer << "\n";
 	accounts.clear();
 	accounts.seekg(0);
 	accounts << numberOfEntries + 1 << "\n";
 	accounts.close();
 
-	username = uBuffer;
-	password = pBuffer;
-	
 	fstream userFile;
 	
-	//Add the file if it doesn't exist and close it
+	//Add the user file if it doesn't exist and close it
 	userFile.open(".//UserData//" + username + ".csv", fstream::app);
 	userFile.close();
 
-	//Open the file for I/O
+	//Open the file for I/O and start with $25K
 	userFile.open(".//UserData//" + username + ".csv", fstream::in | fstream::out);
-	
 	userFile << 0 << "," << 25000.00 << endl;
 	userFile.close();
 	
 	return "Account created!\n";
 }
 
+//Log the user in so that they can buy/sell stocks
 string Account::loginAccount(int FD)
 {
 	string buffer, uBuffer, pBuffer;
 	fstream accounts;
 
+	//Create a new Usernames CSV if one does not exist
+	//It will act as the root databse for all user actions
 	createUsernamesCSV(accounts, buffer);
 	unsigned int numberOfEntries = stoi(buffer);
 
 	uBuffer = communicateWithClient("Enter username: ", FD);
 
+	//Loop through all the usernames to see if it exists
 	for(int x = numberOfEntries; x; x--)
 	{
 		string temp;
+
+		//Store the username and password
 		getline(accounts, temp, ',');
 		getline(accounts, buffer);
-		cout << uBuffer << endl;		
+
 		if(temp == uBuffer)
 		{
 			pBuffer = communicateWithClient("Enter password: ", FD);
 			if(pBuffer == buffer)
 			{
-				//Load account details
+				//Since the password matches, input all the user data
 				isLoggedIn = 1;
 				username = uBuffer;
 				password = pBuffer;
@@ -134,6 +144,7 @@ string Account::loginAccount(int FD)
 	return "Username does not exist!\n";
 }
 
+//Allows the user to buy or sell stocks
 string Account::transaction(int FD, int transactionType)
 {
 	if(!isLoggedIn)
@@ -149,18 +160,23 @@ string Account::transaction(int FD, int transactionType)
 	if (stoi(amount) <= 0)
 		return "Invalid amount entered!\n";
 
+	//Get the current price from Yahoo Finance
 	string price = fetchData(ticker, 5);
 	if (price.find("Error") != string::npos)
 		return price;
 
+	//Remove any commas from the formatted price so we can
+	//use arithmetic on the raw price
 	string rawPrice = price;
 	rawPrice.erase(remove(rawPrice.begin(), rawPrice.end(), ','), rawPrice.end());
 
+	//Buying and selling errors
 	if (transactionType && balance < stod(rawPrice) * stoi(amount))
 		return "Not enough funds!\n";
 	else if(!transactionType && stoi(amount) > portfolio[ticker])
 		return "You do not own enough stock!\n";
 
+	//Update the portfolio
 	double cost = stod(rawPrice) * stoi(amount);
 	balance += transactionType ? -cost : cost;
 
@@ -176,8 +192,12 @@ string Account::transaction(int FD, int transactionType)
 	       "Balance: $" + to_string(balance) + "\n";	
 }
 
+//Logs out a logged in account
 string Account::logoutAccount()
 {
+	if (!isLoggedIn)
+		return "You are not logged in!\n";
+
 	username = password = balance = isLoggedIn = 0;
 	portfolio.clear();
 	return "Logged out!\n";
