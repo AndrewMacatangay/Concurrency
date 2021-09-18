@@ -44,7 +44,9 @@ void communicate(int FD, int connection)
 				 + padding + "register\n"
 				 + padding + "logout\n"
 				 + padding + "buy\n"
-				 + padding + "sell\n";
+				 + padding + "sell\n"
+				 + padding + "balance\n"
+				 + padding + "portfolio\n";
 		}
 		//Fetch the data and store it into the buffer. If the
 		//ticker symbol is valid, print the information on the
@@ -73,6 +75,8 @@ void communicate(int FD, int connection)
 				buffer = clientAccount.transaction(FD, 1);
 			else if (query == "sell")
 				buffer = clientAccount.transaction(FD, 0);
+			else if (query == "balance")
+				buffer = clientAccount.getBalance();
 			else
 				buffer = fetchData(cStrBuffer, 0);
 

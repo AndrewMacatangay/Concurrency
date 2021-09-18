@@ -24,6 +24,7 @@ class Account
 		string transaction(int FD, int transactionType);
 		bool loggedIn();
 		string getUsername();
+		string getBalance();
 };
 
 #endif
