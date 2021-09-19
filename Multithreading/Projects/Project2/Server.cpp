@@ -77,6 +77,8 @@ void communicate(int FD, int connection)
 				buffer = clientAccount.transaction(FD, 0);
 			else if (query == "balance")
 				buffer = clientAccount.getBalance();
+			else if (query == "portfolio")
+				buffer = clientAccount.getPortfolio();
 			else
 				buffer = fetchData(cStrBuffer, 0);
 

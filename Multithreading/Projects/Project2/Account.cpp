@@ -215,6 +215,18 @@ string Account::getBalance()
 	return "Balance: " + to_string(balance) + "\n";
 }
 
+string Account::getPortfolio()
+{
+	if (!isLoggedIn)
+		return "You are not logged in!\n";
+
+	string buffer;
+	for(pair<string, int> stock : portfolio)
+		buffer += stock.first + " " + to_string(stock.second) + "\n";
+
+	return buffer;
+}
+
 bool Account::loggedIn()
 {
 	return isLoggedIn;

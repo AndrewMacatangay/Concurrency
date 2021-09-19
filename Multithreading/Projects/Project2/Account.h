@@ -25,6 +25,7 @@ class Account
 		bool loggedIn();
 		string getUsername();
 		string getBalance();
+		string getPortfolio();
 };
 
 #endif
