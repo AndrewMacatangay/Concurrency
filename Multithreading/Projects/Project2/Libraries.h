@@ -9,6 +9,7 @@
 #include <iostream>
 #include <locale>
 #include <map>
+#include <mutex>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <thread>

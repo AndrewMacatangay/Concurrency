@@ -15,6 +15,7 @@ class Account
 		char* communicateWithClient(string message, int FD);
 		void updateUserFile();
 		char cStrBuffer[4096];
+		mutex functionMutex;
 
 	public:
 		Account();

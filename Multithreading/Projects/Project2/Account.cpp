@@ -48,6 +48,10 @@ void Account::updateUserFile()
 //Create a new account
 string Account::registerAccount(int FD)
 {
+	unique_lock<mutex> l(functionMutex);
+	if(isLoggedIn)
+		return "Please log out first!\n";
+
 	string buffer, uBuffer, pBuffer;
 	fstream accounts;
 
@@ -97,6 +101,9 @@ string Account::registerAccount(int FD)
 //Log the user in so that they can buy/sell stocks
 string Account::loginAccount(int FD)
 {
+	if (isLoggedIn)
+		return "You are already logged in!\n";
+
 	string buffer, uBuffer, pBuffer;
 	fstream accounts;
 
@@ -147,6 +154,7 @@ string Account::loginAccount(int FD)
 //Allows the user to buy or sell stocks
 string Account::transaction(int FD, int transactionType)
 {
+	unique_lock<mutex> l(functionMutex);
 	if(!isLoggedIn)
 		return "Please log in first!\n";
 

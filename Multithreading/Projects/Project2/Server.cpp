@@ -1,5 +1,8 @@
 #include "Libraries.h"
 #include "Account.h"
+
+mutex coutMutex;
+
 int curlWriter(char* data, int size, int nmemb, string* buffer);
 string fetchData(string ticker, int fetchType);
 
@@ -34,7 +37,9 @@ void communicate(int FD, int connection)
 		if (query == "help")
 		{
 			string padding(10, ' ');
+			coutMutex.lock();
 			cout << "Client " << connection << username << ": " << query << "\n\n";
+			coutMutex.unlock();
 			buffer = "Commands: <ticker>\n"
 				 + padding + "<ticker> today\n"
 				 + padding + "<ticker> day averages\n"
@@ -84,12 +89,18 @@ void communicate(int FD, int connection)
 
 			if (buffer.find("Error") == string::npos)
 			{
+				coutMutex.lock();
 				cout << "Client " << connection << username << ": " << query << "\n"
 				     << buffer << "\n";
+				coutMutex.unlock();
 			}
 		}
 		else
-			{ cout << "Client " << connection << " disconnected!" << "\n\n"; return; }
+		{ 
+			coutMutex.lock();
+			cout << "Client " << connection << " disconnected!" << "\n\n"; return;
+			coutMutex.unlock();
+		}
 		
 		//Send the information to the client
 		strncpy(cStrBuffer, buffer.c_str(), 4096);
@@ -107,7 +118,9 @@ void acceptConnections(int serverSocket, sockaddr_in& addr, int& sockLen)
 		if ((FD = accept(serverSocket, (struct sockaddr*) &addr, (socklen_t*) &sockLen)) < 0)
 			{ cerr << "Connection failed!\n"; return; }
 
+		coutMutex.lock();
 		cout << "Client " << connection << " connected!\n\n";
+		coutMutex.unlock();
 		thread(communicate, FD, connection).detach();
 	}
 }
