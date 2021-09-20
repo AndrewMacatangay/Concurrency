@@ -87,11 +87,11 @@ string Account::registerAccount(int FD)
 	fstream userFile;
 	
 	//Add the user file if it doesn't exist and close it
-	userFile.open(".//UserData//" + username + ".csv", fstream::app);
+	userFile.open(".//UserData//" + uBuffer + ".csv", fstream::app);
 	userFile.close();
 
 	//Open the file for I/O and start with $25K
-	userFile.open(".//UserData//" + username + ".csv", fstream::in | fstream::out);
+	userFile.open(".//UserData//" + uBuffer + ".csv", fstream::in | fstream::out);
 	userFile << 0 << "," << 25000.00 << endl;
 	userFile.close();
 	
